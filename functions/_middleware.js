@@ -5,51 +5,80 @@ export async function onRequest(context) {
 
     /*
     =========================================================
-    1. API TIDAK BOLEH DICEGAT MIDDLEWARE
+    1. API SELALU DITERUSKAN
     =========================================================
     */
 
-    if (pathname.startsWith("/api/")) {
+    if (pathname === "/api" || pathname.startsWith("/api/")) {
         return context.next();
     }
 
     /*
     =========================================================
-    2. HANYA PANEL YANG DILINDUNGI
+    2. FILE LOGIN SELALU PUBLIC
+       TIDAK BOLEH DICEK SESSION
+       TIDAK BOLEH REDIRECT
     =========================================================
     */
 
-    const panelPrefix = "/autentikasi-zws-panel";
-
-    if (!pathname.startsWith(panelPrefix)) {
+    if (
+        pathname === "/autentikasi-zws-panel/login.html" ||
+        pathname === "/autentikasi-zws-panel/login.js"
+    ) {
         return context.next();
     }
 
     /*
     =========================================================
-    3. FILE PUBLIK PANEL
+    3. HANYA AREA PANEL YANG DILINDUNGI
     =========================================================
     */
 
-    const publicFiles = [
-        "/autentikasi-zws-panel/login.html",
-        "/autentikasi-zws-panel/login.js"
-    ];
+    const isPanel =
+        pathname === "/autentikasi-zws-panel" ||
+        pathname.startsWith(
+            "/autentikasi-zws-panel/"
+        );
 
-    if (publicFiles.includes(pathname)) {
+    if (!isPanel) {
         return context.next();
     }
 
     /*
     =========================================================
-    4. AMBIL COOKIE SESSION
+    4. PASTIKAN SECRET TERSEDIA
+    =========================================================
+    */
+
+    if (!env.ADMIN_PASSWORD) {
+        console.error(
+            "ZWS AUTH: ADMIN_PASSWORD tidak tersedia."
+        );
+
+        return new Response(
+            "Konfigurasi autentikasi ZWS belum tersedia.",
+            {
+                status: 500,
+                headers: {
+                    "Content-Type":
+                        "text/plain; charset=utf-8",
+                    "Cache-Control":
+                        "no-store"
+                }
+            }
+        );
+    }
+
+    /*
+    =========================================================
+    5. AMBIL COOKIE
     =========================================================
     */
 
     const cookieHeader =
         request.headers.get("Cookie") || "";
 
-    const sessionToken =
+    const token =
         getCookie(
             cookieHeader,
             "zws_auth"
@@ -57,26 +86,24 @@ export async function onRequest(context) {
 
     /*
     =========================================================
-    5. BELUM LOGIN
+    6. BELUM LOGIN
     =========================================================
     */
 
-    if (!sessionToken) {
+    if (!token) {
         return redirectToLogin(url);
     }
 
     /*
     =========================================================
-    6. VALIDASI SESSION LANGSUNG
-       TIDAK MEMANGGIL /api/auth LAGI
+    7. VALIDASI SESSION
     =========================================================
     */
 
     try {
-
         const session =
             await verifySession(
-                sessionToken,
+                token,
                 env.ADMIN_PASSWORD
             );
 
@@ -86,14 +113,13 @@ export async function onRequest(context) {
 
         /*
         =====================================================
-        7. SESSION VALID
+        8. SESSION VALID
         =====================================================
         */
 
         return context.next();
 
     } catch (error) {
-
         console.error(
             "ZWS AUTH MIDDLEWARE ERROR:",
             error
@@ -106,40 +132,37 @@ export async function onRequest(context) {
 
 /*
 ===========================================================
-COOKIE PARSER
+COOKIE
 ===========================================================
 */
 
-function getCookie(cookieHeader, name) {
+function getCookie(
+    cookieHeader,
+    name
+) {
+    const parts =
+        cookieHeader.split(";");
 
-    const cookies =
-        cookieHeader
-            .split(";")
-            .map(cookie => cookie.trim());
+    for (const part of parts) {
+        const index =
+            part.indexOf("=");
 
-    for (const cookie of cookies) {
-
-        const separator =
-            cookie.indexOf("=");
-
-        if (separator === -1) {
+        if (index === -1) {
             continue;
         }
 
         const key =
-            cookie.slice(
-                0,
-                separator
-            );
+            part
+                .slice(0, index)
+                .trim();
 
-        const value =
-            cookie.slice(
-                separator + 1
-            );
-
-        if (key === name) {
-            return value;
+        if (key !== name) {
+            continue;
         }
+
+        return part
+            .slice(index + 1)
+            .trim();
     }
 
     return null;
@@ -148,23 +171,29 @@ function getCookie(cookieHeader, name) {
 
 /*
 ===========================================================
-SESSION VERIFICATION
+VERIFY SESSION
 ===========================================================
 */
 
 async function verifySession(
     token,
-    password
+    secret
 ) {
-
-    if (!token || !password) {
+    if (
+        !token ||
+        !secret
+    ) {
         return null;
     }
 
     const parts =
         token.split(".");
 
-    if (parts.length !== 2) {
+    if (
+        parts.length !== 2 ||
+        !parts[0] ||
+        !parts[1]
+    ) {
         return null;
     }
 
@@ -183,12 +212,12 @@ async function verifySession(
     const expectedSignature =
         await sign(
             encodedPayload,
-            password
+            secret
         );
 
     /*
     ========================================================
-    CONSTANT-TIME COMPARISON
+    BANDINKAN SIGNATURE
     ========================================================
     */
 
@@ -210,31 +239,41 @@ async function verifySession(
     let payload;
 
     try {
-
         payload =
             JSON.parse(
                 fromBase64Url(
                     encodedPayload
                 )
             );
-
-    } catch (error) {
-
+    } catch {
         return null;
     }
 
     /*
     ========================================================
-    CEK EXPIRATION
+    VALIDASI PAYLOAD
     ========================================================
     */
 
     if (
         !payload ||
+        typeof payload !== "object"
+    ) {
+        return null;
+    }
+
+    if (
+        !payload.username ||
         !payload.exp
     ) {
         return null;
     }
+
+    /*
+    ========================================================
+    CEK EXPIRED
+    ========================================================
+    */
 
     const now =
         Math.floor(
@@ -246,24 +285,6 @@ async function verifySession(
     ) {
         return null;
     }
-
-    /*
-    ========================================================
-    CEK USERNAME
-    ========================================================
-    */
-
-    if (
-        !payload.username
-    ) {
-        return null;
-    }
-
-    /*
-    ========================================================
-    SESSION VALID
-    ========================================================
-    */
 
     return payload;
 }
@@ -279,7 +300,6 @@ async function sign(
     value,
     secret
 ) {
-
     const encoder =
         new TextEncoder();
 
@@ -288,8 +308,8 @@ async function sign(
             "raw",
             encoder.encode(secret),
             {
-                name:"HMAC",
-                hash:"SHA-256"
+                name: "HMAC",
+                hash: "SHA-256"
             },
             false,
             ["sign"]
@@ -303,7 +323,9 @@ async function sign(
         );
 
     return toBase64Url(
-        new Uint8Array(signature)
+        new Uint8Array(
+            signature
+        )
     );
 }
 
@@ -315,12 +337,11 @@ BASE64URL ENCODE
 */
 
 function toBase64Url(bytes) {
-
-    let binary="";
+    let binary = "";
 
     for (
-        let i=0;
-        i<bytes.length;
+        let i = 0;
+        i < bytes.length;
         i++
     ) {
         binary +=
@@ -330,9 +351,9 @@ function toBase64Url(bytes) {
     }
 
     return btoa(binary)
-        .replace(/\+/g,"-")
-        .replace(/\//g,"_")
-        .replace(/=+$/,"");
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/g, "");
 }
 
 
@@ -343,14 +364,13 @@ BASE64URL DECODE
 */
 
 function fromBase64Url(value) {
-
     let base64 =
         value
-            .replace(/-/g,"+")
-            .replace(/_/g,"/");
+            .replace(/-/g, "+")
+            .replace(/_/g, "/");
 
     while (
-        base64.length % 4
+        base64.length % 4 !== 0
     ) {
         base64 += "=";
     }
@@ -361,7 +381,7 @@ function fromBase64Url(value) {
 
 /*
 ===========================================================
-CONSTANT-TIME COMPARISON
+CONSTANT-TIME COMPARE
 ===========================================================
 */
 
@@ -369,7 +389,6 @@ function constantTimeEqual(
     a,
     b
 ) {
-
     if (
         typeof a !== "string" ||
         typeof b !== "string"
@@ -386,8 +405,8 @@ function constantTimeEqual(
     let result = 0;
 
     for (
-        let i=0;
-        i<a.length;
+        let i = 0;
+        i < a.length;
         i++
     ) {
         result |=
@@ -406,12 +425,16 @@ REDIRECT LOGIN
 */
 
 function redirectToLogin(url) {
-
     const loginUrl =
         new URL(
             "/autentikasi-zws-panel/login.html",
             url.origin
         );
+
+    /*
+    Jangan terus-menerus menambahkan
+    redirect=login.html.
+    */
 
     const requestedPath =
         url.pathname +
@@ -422,7 +445,6 @@ function redirectToLogin(url) {
         requestedPath !==
             "/autentikasi-zws-panel/login.html"
     ) {
-
         loginUrl.searchParams.set(
             "redirect",
             requestedPath
