@@ -1,165 +1,409 @@
 export async function onRequest(context) {
-    const { request } = context;
-
+    const { request, env } = context;
     const url = new URL(request.url);
     const pathname = url.pathname;
 
-
-    /* ==================================================
-       API TIDAK DIKUNCI OLEH MIDDLEWARE INI
-
-       /api/auth
-       /api/cms
-       dan API lainnya tetap diproses
-       oleh Pages Functions masing-masing.
-    ================================================== */
+    /*
+    =========================================================
+    1. API TIDAK BOLEH DICEGAT MIDDLEWARE
+    =========================================================
+    */
 
     if (pathname.startsWith("/api/")) {
         return context.next();
     }
 
+    /*
+    =========================================================
+    2. HANYA PANEL YANG DILINDUNGI
+    =========================================================
+    */
 
-    /* ==================================================
-       HANYA PROTEKSI PANEL ZWS
+    const panelPrefix = "/autentikasi-zws-panel";
 
-       Semua URL di bawah:
-
-       /autentikasi-zws-panel/
-
-       akan diperiksa.
-
-       Halaman login dan login.js tetap public.
-    ================================================== */
-
-    const panelPrefix =
-        "/autentikasi-zws-panel";
-
-
-    if (
-        !pathname.startsWith(
-            panelPrefix
-        )
-    ) {
+    if (!pathname.startsWith(panelPrefix)) {
         return context.next();
     }
 
-
-    /* ==================================================
-       FILE PUBLIC PANEL
-
-       File yang harus bisa dibuka tanpa
-       autentikasi.
-    ================================================== */
+    /*
+    =========================================================
+    3. FILE PUBLIK PANEL
+    =========================================================
+    */
 
     const publicFiles = [
         "/autentikasi-zws-panel/login.html",
         "/autentikasi-zws-panel/login.js"
     ];
 
-
-    if (
-        publicFiles.includes(pathname)
-    ) {
+    if (publicFiles.includes(pathname)) {
         return context.next();
     }
 
+    /*
+    =========================================================
+    4. AMBIL COOKIE SESSION
+    =========================================================
+    */
 
-    /* ==================================================
-       CEK SESSION
-    ================================================== */
+    const cookieHeader =
+        request.headers.get("Cookie") || "";
+
+    const sessionToken =
+        getCookie(
+            cookieHeader,
+            "zws_auth"
+        );
+
+    /*
+    =========================================================
+    5. BELUM LOGIN
+    =========================================================
+    */
+
+    if (!sessionToken) {
+        return redirectToLogin(url);
+    }
+
+    /*
+    =========================================================
+    6. VALIDASI SESSION LANGSUNG
+       TIDAK MEMANGGIL /api/auth LAGI
+    =========================================================
+    */
 
     try {
 
-        const authUrl =
-            new URL(
-                "/api/auth?action=session",
-                url.origin
+        const session =
+            await verifySession(
+                sessionToken,
+                env.ADMIN_PASSWORD
             );
 
+        if (!session) {
+            return redirectToLogin(url);
+        }
 
         /*
-         * Cookie dari request pengguna
-         * diteruskan ke API authentication.
-         */
+        =====================================================
+        7. SESSION VALID
+        =====================================================
+        */
 
-        const authRequest =
-            new Request(
-                authUrl.toString(),
-                {
-                    method: "GET",
-                    headers: {
-                        "Cookie":
-                            request.headers.get(
-                                "Cookie"
-                            ) || "",
-                        "Accept":
-                            "application/json"
-                    }
-                }
-            );
-
-
-        const authResponse =
-            await fetch(
-                authRequest
-            );
-
-
-        if (!authResponse.ok) {
-            return redirectToLogin(
-                url
-            );
-        }
-
-
-        const data =
-            await authResponse.json();
-
-
-        /* ==============================================
-           SESSION VALID
-        ============================================== */
-
-        if (
-            data &&
-            data.success &&
-            data.authenticated === true
-        ) {
-            return context.next();
-        }
-
-
-        /* ==============================================
-           SESSION TIDAK VALID
-        ============================================== */
-
-        return redirectToLogin(
-            url
-        );
+        return context.next();
 
     } catch (error) {
 
         console.error(
-            "ZWS MIDDLEWARE AUTH ERROR:",
+            "ZWS AUTH MIDDLEWARE ERROR:",
             error
         );
 
-
-        /*
-         * Jika sistem authentication mengalami
-         * error, jangan berikan akses ke panel.
-         */
-
-        return redirectToLogin(
-            url
-        );
+        return redirectToLogin(url);
     }
 }
 
 
-/* ==================================================
-   REDIRECT KE LOGIN
-================================================== */
+/*
+===========================================================
+COOKIE PARSER
+===========================================================
+*/
+
+function getCookie(cookieHeader, name) {
+
+    const cookies =
+        cookieHeader
+            .split(";")
+            .map(cookie => cookie.trim());
+
+    for (const cookie of cookies) {
+
+        const separator =
+            cookie.indexOf("=");
+
+        if (separator === -1) {
+            continue;
+        }
+
+        const key =
+            cookie.slice(
+                0,
+                separator
+            );
+
+        const value =
+            cookie.slice(
+                separator + 1
+            );
+
+        if (key === name) {
+            return value;
+        }
+    }
+
+    return null;
+}
+
+
+/*
+===========================================================
+SESSION VERIFICATION
+===========================================================
+*/
+
+async function verifySession(
+    token,
+    password
+) {
+
+    if (!token || !password) {
+        return null;
+    }
+
+    const parts =
+        token.split(".");
+
+    if (parts.length !== 2) {
+        return null;
+    }
+
+    const encodedPayload =
+        parts[0];
+
+    const receivedSignature =
+        parts[1];
+
+    /*
+    ========================================================
+    BUAT ULANG SIGNATURE
+    ========================================================
+    */
+
+    const expectedSignature =
+        await sign(
+            encodedPayload,
+            password
+        );
+
+    /*
+    ========================================================
+    CONSTANT-TIME COMPARISON
+    ========================================================
+    */
+
+    if (
+        !constantTimeEqual(
+            receivedSignature,
+            expectedSignature
+        )
+    ) {
+        return null;
+    }
+
+    /*
+    ========================================================
+    DECODE PAYLOAD
+    ========================================================
+    */
+
+    let payload;
+
+    try {
+
+        payload =
+            JSON.parse(
+                fromBase64Url(
+                    encodedPayload
+                )
+            );
+
+    } catch (error) {
+
+        return null;
+    }
+
+    /*
+    ========================================================
+    CEK EXPIRATION
+    ========================================================
+    */
+
+    if (
+        !payload ||
+        !payload.exp
+    ) {
+        return null;
+    }
+
+    const now =
+        Math.floor(
+            Date.now() / 1000
+        );
+
+    if (
+        Number(payload.exp) <= now
+    ) {
+        return null;
+    }
+
+    /*
+    ========================================================
+    CEK USERNAME
+    ========================================================
+    */
+
+    if (
+        !payload.username
+    ) {
+        return null;
+    }
+
+    /*
+    ========================================================
+    SESSION VALID
+    ========================================================
+    */
+
+    return payload;
+}
+
+
+/*
+===========================================================
+HMAC SHA-256
+===========================================================
+*/
+
+async function sign(
+    value,
+    secret
+) {
+
+    const encoder =
+        new TextEncoder();
+
+    const key =
+        await crypto.subtle.importKey(
+            "raw",
+            encoder.encode(secret),
+            {
+                name:"HMAC",
+                hash:"SHA-256"
+            },
+            false,
+            ["sign"]
+        );
+
+    const signature =
+        await crypto.subtle.sign(
+            "HMAC",
+            key,
+            encoder.encode(value)
+        );
+
+    return toBase64Url(
+        new Uint8Array(signature)
+    );
+}
+
+
+/*
+===========================================================
+BASE64URL ENCODE
+===========================================================
+*/
+
+function toBase64Url(bytes) {
+
+    let binary="";
+
+    for (
+        let i=0;
+        i<bytes.length;
+        i++
+    ) {
+        binary +=
+            String.fromCharCode(
+                bytes[i]
+            );
+    }
+
+    return btoa(binary)
+        .replace(/\+/g,"-")
+        .replace(/\//g,"_")
+        .replace(/=+$/,"");
+}
+
+
+/*
+===========================================================
+BASE64URL DECODE
+===========================================================
+*/
+
+function fromBase64Url(value) {
+
+    let base64 =
+        value
+            .replace(/-/g,"+")
+            .replace(/_/g,"/");
+
+    while (
+        base64.length % 4
+    ) {
+        base64 += "=";
+    }
+
+    return atob(base64);
+}
+
+
+/*
+===========================================================
+CONSTANT-TIME COMPARISON
+===========================================================
+*/
+
+function constantTimeEqual(
+    a,
+    b
+) {
+
+    if (
+        typeof a !== "string" ||
+        typeof b !== "string"
+    ) {
+        return false;
+    }
+
+    if (
+        a.length !== b.length
+    ) {
+        return false;
+    }
+
+    let result = 0;
+
+    for (
+        let i=0;
+        i<a.length;
+        i++
+    ) {
+        result |=
+            a.charCodeAt(i) ^
+            b.charCodeAt(i);
+    }
+
+    return result === 0;
+}
+
+
+/*
+===========================================================
+REDIRECT LOGIN
+===========================================================
+*/
 
 function redirectToLogin(url) {
 
@@ -169,30 +413,21 @@ function redirectToLogin(url) {
             url.origin
         );
 
-
-    /*
-     * Simpan halaman tujuan supaya
-     * nantinya bisa dikembangkan menjadi:
-
-     login → kembali ke halaman yang diminta.
-     */
-
     const requestedPath =
         url.pathname +
         url.search;
-
 
     if (
         requestedPath &&
         requestedPath !==
             "/autentikasi-zws-panel/login.html"
     ) {
+
         loginUrl.searchParams.set(
             "redirect",
             requestedPath
         );
     }
-
 
     return Response.redirect(
         loginUrl.toString(),
