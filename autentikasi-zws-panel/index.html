@@ -4,1678 +4,1610 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<title>ZWS CMS | Dashboard</title>
-
+<title>ZWS CMS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
 <script src="https://cdn.tailwindcss.com"></script>
-
 <script>
 tailwind.config={
     theme:{
         extend:{
+            fontFamily:{sans:["Inter","sans-serif"]},
             colors:{
                 zws:{
                     50:"#eff6ff",
                     100:"#dbeafe",
-                    200:"#bfdbfe",
-                    300:"#93c5fd",
-                    400:"#60a5fa",
-                    500:"#3b82f6",
-                    600:"#2563eb",
-                    700:"#1d4ed8",
-                    800:"#1e40af",
-                    900:"#1e3a8a"
+                    500:"#1463d6",
+                    600:"#1256bd",
+                    700:"#0f469b",
+                    800:"#103b7a",
+                    900:"#0d2f5f"
                 }
-            },
-            boxShadow:{
-                soft:"0 8px 30px rgba(15,23,42,.06)"
             }
         }
     }
 };
 </script>
-
 <style>
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    background:#f8fafc;
-    color:#0f172a;
-}
+html,body{margin:0;min-height:100%;font-family:Inter,sans-serif;background:#f5f7fb;color:#172033}
+body{overflow-x:hidden}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 ::-webkit-scrollbar{width:7px;height:7px}
-::-webkit-scrollbar-track{background:#f1f5f9}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:20px}
-::-webkit-scrollbar-thumb:hover{background:#94a3b8}
-
-.sidebar{
-    width:260px;
-    transition:transform .25s ease,width .25s ease;
-}
-.main-area{
-    margin-left:260px;
-    min-height:100vh;
-    transition:margin-left .25s ease;
-}
-.mobile-overlay{
-    display:none;
-}
-.nav-item{
-    transition:.18s ease;
-}
-.nav-item:hover{
-    background:#eff6ff;
-    color:#2563eb;
-}
-.nav-item.active{
-    background:#2563eb;
-    color:#fff;
-    box-shadow:0 5px 14px rgba(37,99,235,.20);
-}
-.nav-item.active:hover{
-    background:#2563eb;
-    color:#fff;
-}
-.stat-card{
-    transition:transform .2s ease,box-shadow .2s ease;
-}
-.stat-card:hover{
-    transform:translateY(-2px);
-    box-shadow:0 12px 35px rgba(15,23,42,.08);
-}
-.loading{
-    animation:spin 1s linear infinite;
-}
-@keyframes spin{
-    from{transform:rotate(0)}
-    to{transform:rotate(360deg)}
-}
-.fade-in{
-    animation:fadeIn .2s ease;
-}
-@keyframes fadeIn{
-    from{opacity:0;transform:translateY(5px)}
-    to{opacity:1;transform:translateY(0)}
-}
-.toast{
-    animation:toastIn .25s ease;
-}
-@keyframes toastIn{
-    from{opacity:0;transform:translateY(12px)}
-    to{opacity:1;transform:translateY(0)}
-}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px}
+::-webkit-scrollbar-track{background:transparent}
+.sidebar{width:260px}
+.main-wrap{margin-left:260px;min-height:100vh}
+.nav-item{transition:.18s}
+.nav-item.active{background:#eff6ff;color:#1463d6;font-weight:700}
+.nav-item:hover:not(.active){background:#f8fafc}
+.mobile-overlay{display:none}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px}
+.stat-card{transition:.2s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(15,23,42,.06)}
+.page-view{display:none}
+.page-view.active{display:block}
+.table-wrap{overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;min-width:680px}
+.data-table th{background:#f8fafc;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;text-align:left;padding:13px 16px;border-bottom:1px solid #e5e7eb;white-space:nowrap}
+.data-table td{padding:14px 16px;border-bottom:1px solid #eef0f3;font-size:14px;vertical-align:middle}
+.data-table tr:last-child td{border-bottom:0}
+.data-table tr:hover td{background:#fafcff}
+.input{width:100%;border:1px solid #d9dee7;border-radius:10px;padding:10px 12px;outline:none;background:#fff;transition:.15s}
+.input:focus{border-color:#1463d6;box-shadow:0 0 0 3px rgba(20,99,214,.1)}
+.label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:7px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;border:1px solid transparent;transition:.15s}
+.btn-primary{background:#1463d6;color:#fff}
+.btn-primary:hover{background:#1256bd}
+.btn-secondary{background:#fff;color:#334155;border-color:#d9dee7}
+.btn-secondary:hover{background:#f8fafc}
+.btn-danger{background:#fff;color:#dc2626;border-color:#fecaca}
+.btn-danger:hover{background:#fef2f2}
+.badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.badge-green{background:#ecfdf3;color:#15803d}
+.badge-yellow{background:#fffbeb;color:#b45309}
+.badge-gray{background:#f1f5f9;color:#64748b}
+.badge-blue{background:#eff6ff;color:#1463d6}
+.modal{display:none}
+.modal.show{display:flex}
+.toast{transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s}
+.toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
+.loading{animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.45}}
+.sidebar-logo img{max-height:42px;width:auto;object-fit:contain}
+.empty{padding:40px 20px;text-align:center;color:#64748b}
 @media(max-width:1023px){
-    .sidebar{
-        transform:translateX(-100%);
-        position:fixed;
-        z-index:60;
-        left:0;
-        top:0;
-        bottom:0;
-    }
-    .sidebar.open{
-        transform:translateX(0);
-    }
-    .main-area{
-        margin-left:0;
-    }
-    .mobile-overlay.show{
-        display:block;
-        position:fixed;
-        inset:0;
-        background:rgba(15,23,42,.45);
-        z-index:50;
-    }
+    .sidebar{transform:translateX(-100%);transition:.25s;z-index:50}
+    .sidebar.open{transform:translateX(0)}
+    .main-wrap{margin-left:0}
+    .mobile-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:40}
+    .mobile-overlay.show{display:block}
+}
+@media(max-width:640px){
+    .content-pad{padding:16px!important}
+    .topbar-title{font-size:16px}
+    .hide-mobile{display:none}
 }
 </style>
 </head>
 
 <body>
 
-<!-- MOBILE OVERLAY -->
 <div id="mobile-overlay" class="mobile-overlay"></div>
 
-<!-- =========================================================
-     SIDEBAR
-========================================================= -->
 <aside id="sidebar" class="sidebar fixed left-0 top-0 bottom-0 bg-white border-r border-slate-200 flex flex-col">
-
-    <!-- LOGO -->
-    <div class="h-20 px-5 flex items-center border-b border-slate-200 shrink-0">
-        <a href="./" class="flex items-center gap-3 min-w-0">
-            <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
-                <img
-                    src="https://zenamagroup.com/assets/zws-group.png"
-                    alt="ZWS"
-                    class="w-8 h-8 object-contain"
-                >
-            </div>
-
+    <div class="h-20 px-5 flex items-center border-b border-slate-100 sidebar-logo">
+        <a href="/" target="_blank" class="flex items-center gap-3 min-w-0">
+            <img src="https://zenamagroup.com/assets/zws-group.png" alt="ZWS">
             <div class="min-w-0">
-                <div class="font-extrabold text-slate-900 leading-tight">
-                    ZWS CMS
-                </div>
-                <div class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                    Zenama Web Services
-                </div>
+                <div class="font-extrabold text-slate-900 text-lg leading-none">ZWS CMS</div>
+                <div class="text-[10px] text-slate-400 mt-1 font-medium">Zenama Web Services</div>
             </div>
         </a>
     </div>
 
-    <!-- NAV -->
-    <nav class="flex-1 overflow-y-auto px-3 py-5">
+    <nav class="flex-1 overflow-y-auto p-3">
+        <div class="px-3 pt-2 pb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">Utama</div>
 
-        <div class="px-3 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Utama
-        </div>
-
-        <button
-            type="button"
-            data-page="dashboard"
-            class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left"
-        >
-            <i class="fa-solid fa-gauge-high w-5 text-center"></i>
+        <button class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="dashboard">
+            <i class="fa-solid fa-gauge w-5 text-center"></i>
             <span>Dashboard</span>
         </button>
 
-        <div class="px-3 mt-6 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Konten Website
-        </div>
-
-        <button type="button" data-page="pages" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="pages">
             <i class="fa-regular fa-file-lines w-5 text-center"></i>
             <span>Halaman</span>
         </button>
 
-        <button type="button" data-page="sections" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="sections">
             <i class="fa-solid fa-layer-group w-5 text-center"></i>
             <span>Section</span>
         </button>
 
-        <button type="button" data-page="navigation" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="navigation">
             <i class="fa-solid fa-bars w-5 text-center"></i>
             <span>Navigasi</span>
         </button>
 
-        <button type="button" data-page="media" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="media">
             <i class="fa-regular fa-images w-5 text-center"></i>
             <span>Media</span>
         </button>
 
-        <div class="px-3 mt-6 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Konfigurasi
-        </div>
+        <div class="px-3 pt-6 pb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">Konfigurasi</div>
 
-        <button type="button" data-page="settings" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
-            <i class="fa-solid fa-gear w-5 text-center"></i>
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="settings">
+            <i class="fa-solid fa-sliders w-5 text-center"></i>
             <span>Pengaturan Website</span>
         </button>
 
-        <button type="button" data-page="seo" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="seo">
             <i class="fa-solid fa-magnifying-glass w-5 text-center"></i>
             <span>SEO</span>
         </button>
 
-        <button type="button" data-page="contact" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="contact">
             <i class="fa-regular fa-address-book w-5 text-center"></i>
             <span>Kontak</span>
         </button>
 
-        <div class="px-3 mt-6 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Sistem
-        </div>
+        <div class="px-3 pt-6 pb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">Sistem</div>
 
-        <button type="button" data-page="users" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="users">
             <i class="fa-solid fa-users w-5 text-center"></i>
             <span>Pengguna</span>
         </button>
 
-        <button type="button" data-page="revisions" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left text-slate-600">
+        <button class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700" data-page="revisions">
             <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
             <span>Revisi</span>
         </button>
-
     </nav>
 
-    <!-- SIDEBAR FOOTER -->
-    <div class="p-3 border-t border-slate-200 shrink-0">
-
-        <a
-            href="/"
-            target="_blank"
-            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition"
-        >
+    <div class="p-3 border-t border-slate-100">
+        <a href="/" target="_blank" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700">
             <i class="fa-solid fa-arrow-up-right-from-square w-5 text-center"></i>
             <span>Lihat Website</span>
         </a>
-
-        <button
-            type="button"
-            id="logout-btn"
-            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition mt-1"
-        >
+        <button id="logout-btn" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-600">
             <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
             <span>Keluar</span>
         </button>
-
     </div>
-
 </aside>
 
-<!-- =========================================================
-     MAIN
-========================================================= -->
-<main class="main-area">
+<div class="main-wrap">
 
-    <!-- TOPBAR -->
-    <header class="h-20 bg-white border-b border-slate-200 sticky top-0 z-40">
-
-        <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-
-            <div class="flex items-center gap-3 min-w-0">
-
-                <button
-                    type="button"
-                    id="mobile-menu"
-                    class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50"
-                >
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-
-                <div class="min-w-0">
-                    <h1 id="page-title" class="text-lg sm:text-xl font-extrabold text-slate-900 truncate">
-                        Dashboard
-                    </h1>
-                    <p id="page-subtitle" class="text-xs text-slate-400 hidden sm:block">
-                        Kelola seluruh website Anda dari satu tempat.
-                    </p>
-                </div>
-
+<header class="h-20 bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="h-full flex items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3 min-w-0">
+            <button id="mobile-menu" class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 text-slate-600">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="min-w-0">
+                <div id="topbar-title" class="topbar-title font-bold text-slate-900 truncate">Dashboard</div>
+                <div id="topbar-subtitle" class="text-xs text-slate-400 truncate">Ringkasan CMS website Anda</div>
             </div>
-
-            <div class="flex items-center gap-2 sm:gap-3">
-
-                <button
-                    type="button"
-                    id="refresh-btn"
-                    class="w-10 h-10 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition"
-                    title="Refresh data"
-                >
-                    <i id="refresh-icon" class="fa-solid fa-rotate"></i>
-                </button>
-
-                <a
-                    href="/"
-                    target="_blank"
-                    class="hidden sm:flex items-center gap-2 px-3 py-2.5 rounded-xl bg-zws-600 text-white text-sm font-semibold hover:bg-zws-700 transition"
-                >
-                    <i class="fa-solid fa-globe"></i>
-                    <span>Website</span>
-                </a>
-
-                <div class="hidden sm:flex items-center gap-3 pl-3 border-l border-slate-200">
-                    <div class="w-9 h-9 rounded-full bg-zws-100 text-zws-700 flex items-center justify-center">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-
-                    <div class="leading-tight">
-                        <div id="current-user" class="text-sm font-bold text-slate-800">
-                            Admin
-                        </div>
-                        <div class="text-[11px] text-slate-400">
-                            Administrator
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
         </div>
 
-    </header>
+        <div class="flex items-center gap-2 sm:gap-3">
+            <button id="refresh-btn" title="Refresh data" class="w-10 h-10 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50">
+                <i class="fa-solid fa-rotate"></i>
+            </button>
 
-    <!-- CONTENT -->
-    <div id="cms-content" class="p-4 sm:p-6 lg:p-8">
+            <a href="/" target="_blank" title="Lihat website" class="w-10 h-10 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 flex items-center justify-center">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
 
-        <!-- =================================================
-             DASHBOARD PAGE
-        ================================================== -->
-        <section id="page-dashboard" data-view class="fade-in">
-
-            <div class="mb-7">
-                <div class="text-sm text-zws-600 font-bold mb-1">
-                    ZWS CMS
+            <div class="hidden sm:flex items-center gap-2 pl-3 ml-1 border-l border-slate-200">
+                <div class="w-9 h-9 rounded-full bg-blue-50 text-zws-600 flex items-center justify-center">
+                    <i class="fa-solid fa-user"></i>
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                    Selamat datang di CMS
-                </h2>
-                <p class="text-sm text-slate-500 mt-2 max-w-2xl">
-                    Kelola halaman utama, section, navigasi, media, SEO,
-                    pengaturan website, dan seluruh konten website Anda.
-                </p>
+                <div class="max-w-[130px]">
+                    <div id="user-name" class="text-sm font-semibold text-slate-700 truncate">Admin</div>
+                    <div class="text-[11px] text-slate-400">Administrator</div>
+                </div>
             </div>
-
-            <!-- STATS -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
-
-                <div class="stat-card bg-white border border-slate-200 rounded-2xl p-5 shadow-soft">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400">
-                                Halaman
-                            </p>
-                            <p id="stat-pages" class="text-2xl font-extrabold text-slate-900 mt-2">
-                                —
-                            </p>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <i class="fa-regular fa-file-lines"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card bg-white border border-slate-200 rounded-2xl p-5 shadow-soft">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400">
-                                Section
-                            </p>
-                            <p id="stat-sections" class="text-2xl font-extrabold text-slate-900 mt-2">
-                                —
-                            </p>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
-                            <i class="fa-solid fa-layer-group"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card bg-white border border-slate-200 rounded-2xl p-5 shadow-soft">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400">
-                                Navigasi
-                            </p>
-                            <p id="stat-navigation" class="text-2xl font-extrabold text-slate-900 mt-2">
-                                —
-                            </p>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                            <i class="fa-solid fa-bars"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card bg-white border border-slate-200 rounded-2xl p-5 shadow-soft">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400">
-                                Media
-                            </p>
-                            <p id="stat-media" class="text-2xl font-extrabold text-slate-900 mt-2">
-                                —
-                            </p>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
-                            <i class="fa-regular fa-images"></i>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- TWO COLUMNS -->
-            <div class="grid xl:grid-cols-3 gap-6">
-
-                <!-- LEFT -->
-                <div class="xl:col-span-2 space-y-6">
-
-                    <!-- QUICK ACTION -->
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-soft overflow-hidden">
-
-                        <div class="px-5 py-4 border-b border-slate-100">
-                            <h3 class="font-bold text-slate-900">
-                                Aksi Cepat
-                            </h3>
-                            <p class="text-xs text-slate-400 mt-1">
-                                Akses cepat ke pengelolaan website.
-                            </p>
-                        </div>
-
-                        <div class="p-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-
-                            <button data-page="pages" class="quick-action flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-zws-200 hover:bg-zws-50 transition text-left">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-plus"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-bold text-slate-800">Halaman</div>
-                                    <div class="text-[11px] text-slate-400">Kelola halaman</div>
-                                </div>
-                            </button>
-
-                            <button data-page="sections" class="quick-action flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-zws-200 hover:bg-zws-50 transition text-left">
-                                <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-layer-group"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-bold text-slate-800">Section</div>
-                                    <div class="text-[11px] text-slate-400">Atur isi halaman</div>
-                                </div>
-                            </button>
-
-                            <button data-page="navigation" class="quick-action flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-zws-200 hover:bg-zws-50 transition text-left">
-                                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-bars"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-bold text-slate-800">Navigasi</div>
-                                    <div class="text-[11px] text-slate-400">Atur menu website</div>
-                                </div>
-                            </button>
-
-                            <button data-page="media" class="quick-action flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-zws-200 hover:bg-zws-50 transition text-left">
-                                <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
-                                    <i class="fa-regular fa-images"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-bold text-slate-800">Media</div>
-                                    <div class="text-[11px] text-slate-400">Kelola gambar</div>
-                                </div>
-                            </button>
-
-                            <button data-page="settings" class="quick-action flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-zws-200 hover:bg-zws-50 transition text-left">
-                                <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-gear"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-bold text-slate-800">Pengaturan</div>
-                                    <div class="text-[11px] text-slate-400">Konfigurasi website</div>
-                                </div>
-                            </button>
-
-                            <button data-page="seo" class="quick-action flex items-center gap-3 p-4 rounded-xl border border-slate-200 hover:border-zws-200 hover:bg-zws-50 transition text-left">
-                                <div class="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-bold text-slate-800">SEO</div>
-                                    <div class="text-[11px] text-slate-400">Optimasi pencarian</div>
-                                </div>
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <!-- HOME STRUCTURE -->
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-soft overflow-hidden">
-
-                        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-3">
-                            <div>
-                                <h3 class="font-bold text-slate-900">
-                                    Struktur Beranda
-                                </h3>
-                                <p class="text-xs text-slate-400 mt-1">
-                                    Data section dari D1.
-                                </p>
-                            </div>
-
-                            <button
-                                type="button"
-                                data-page="sections"
-                                class="text-xs font-bold text-zws-600 hover:text-zws-700"
-                            >
-                                Kelola
-                            </button>
-                        </div>
-
-                        <div id="home-sections-list" class="divide-y divide-slate-100">
-                            <div class="p-8 text-center text-sm text-slate-400">
-                                <i class="fa-solid fa-circle-notch loading mr-2"></i>
-                                Memuat data...
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- RIGHT -->
-                <div class="space-y-6">
-
-                    <!-- SYSTEM STATUS -->
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-soft overflow-hidden">
-
-                        <div class="px-5 py-4 border-b border-slate-100">
-                            <h3 class="font-bold text-slate-900">
-                                Status Sistem
-                            </h3>
-                            <p class="text-xs text-slate-400 mt-1">
-                                Pemeriksaan koneksi CMS.
-                            </p>
-                        </div>
-
-                        <div class="p-5 space-y-4">
-
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    <div id="status-api-dot" class="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
-                                    <span class="text-sm font-medium text-slate-700">
-                                        ZWS CMS API
-                                    </span>
-                                </div>
-                                <span id="status-api-text" class="text-xs text-slate-400">
-                                    Checking
-                                </span>
-                            </div>
-
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    <div id="status-db-dot" class="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
-                                    <span class="text-sm font-medium text-slate-700">
-                                        D1 Database
-                                    </span>
-                                </div>
-                                <span id="status-db-text" class="text-xs text-slate-400">
-                                    Checking
-                                </span>
-                            </div>
-
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-                                    <span class="text-sm font-medium text-slate-700">
-                                        Website
-                                    </span>
-                                </div>
-                                <span class="text-xs text-emerald-600 font-semibold">
-                                    Online
-                                </span>
-                            </div>
-
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-3">
-                                    <div id="status-media-dot" class="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
-                                    <span class="text-sm font-medium text-slate-700">
-                                        Media Storage
-                                    </span>
-                                </div>
-                                <span id="status-media-text" class="text-xs text-slate-400">
-                                    Checking
-                                </span>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- WEBSITE INFO -->
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-soft overflow-hidden">
-
-                        <div class="px-5 py-4 border-b border-slate-100">
-                            <h3 class="font-bold text-slate-900">
-                                Informasi Website
-                            </h3>
-                        </div>
-
-                        <div class="p-5">
-
-                            <div class="mb-5">
-                                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                                    Nama Website
-                                </div>
-                                <div id="info-site-name" class="font-bold text-slate-800 mt-1">
-                                    —
-                                </div>
-                            </div>
-
-                            <div class="mb-5">
-                                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                                    Domain
-                                </div>
-                                <a
-                                    id="info-site-url"
-                                    href="/"
-                                    target="_blank"
-                                    class="text-sm text-zws-600 font-semibold mt-1 block truncate"
-                                >
-                                    —
-                                </a>
-                            </div>
-
-                            <div>
-                                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                                    Status Publikasi
-                                </div>
-                                <div class="flex items-center gap-2 mt-2">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                    <span id="info-site-status" class="text-sm font-semibold text-emerald-600">
-                                        Aktif
-                                    </span>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- API INFO -->
-                    <div class="rounded-2xl bg-gradient-to-br from-zws-700 to-zws-900 text-white p-5 shadow-soft">
-
-                        <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-cloud"></i>
-                            </div>
-
-                            <div>
-                                <div class="font-bold">
-                                    ZWS Cloud CMS
-                                </div>
-                                <p class="text-xs text-blue-100 mt-1 leading-relaxed">
-                                    Konten website disimpan dan dikelola melalui
-                                    Cloudflare D1 dengan media pada R2.
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- =================================================
-             MODULE PLACEHOLDER
-        ================================================== -->
-        <section id="page-module" data-view class="hidden fade-in">
-
-            <div class="mb-7">
-                <div id="module-icon" class="w-12 h-12 rounded-2xl bg-zws-100 text-zws-600 flex items-center justify-center mb-4">
-                    <i class="fa-solid fa-layer-group"></i>
-                </div>
-
-                <h2 id="module-title" class="text-2xl font-extrabold text-slate-900">
-                    Modul CMS
-                </h2>
-
-                <p id="module-description" class="text-sm text-slate-500 mt-2">
-                    Modul pengelolaan website.
-                </p>
-            </div>
-
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-soft overflow-hidden">
-
-                <div class="p-8 sm:p-12 text-center">
-
-                    <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-5 text-2xl">
-                        <i id="module-empty-icon" class="fa-solid fa-code"></i>
-                    </div>
-
-                    <h3 class="font-bold text-lg text-slate-900">
-                        Modul siap dihubungkan ke API
-                    </h3>
-
-                    <p id="module-empty-text" class="text-sm text-slate-500 max-w-lg mx-auto mt-2 leading-relaxed">
-                        Struktur CMS sudah disiapkan. Modul ini akan menggunakan API ZWS dan database D1.
-                    </p>
-
-                    <div class="mt-6 flex flex-wrap justify-center gap-2">
-
-                        <span class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 text-xs font-semibold">
-                            Cloudflare D1
-                        </span>
-
-                        <span class="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 text-xs font-semibold">
-                            ZWS API
-                        </span>
-
-                        <span class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold">
-                            Responsive
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
+        </div>
+    </div>
+</header>
+
+<main class="content-pad p-4 sm:p-6 lg:p-8">
+
+<!-- DASHBOARD -->
+<section id="view-dashboard" class="page-view active">
+    <div class="mb-6">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Dashboard</h1>
+        <p class="text-sm text-slate-500 mt-1">Kelola website Anda melalui ZWS CMS.</p>
     </div>
 
-</main>
+    <div id="dashboard-error" class="hidden mb-5 rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm"></div>
 
-<!-- =========================================================
-     TOAST
-========================================================= -->
-<div
-    id="toast"
-    class="fixed bottom-5 right-5 z-[100] hidden max-w-sm"
->
-    <div
-        id="toast-inner"
-        class="toast bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3"
-    >
-        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
-        <span id="toast-message" class="text-sm font-medium">
-            Berhasil.
-        </span>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="card stat-card p-5">
+            <div class="flex items-start justify-between">
+                <div>
+                    <div class="text-xs font-semibold text-slate-400">Halaman</div>
+                    <div id="stat-pages" class="text-2xl font-extrabold text-slate-900 mt-2">—</div>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-zws-600 flex items-center justify-center">
+                    <i class="fa-regular fa-file-lines"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card stat-card p-5">
+            <div class="flex items-start justify-between">
+                <div>
+                    <div class="text-xs font-semibold text-slate-400">Section</div>
+                    <div id="stat-sections" class="text-2xl font-extrabold text-slate-900 mt-2">—</div>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card stat-card p-5">
+            <div class="flex items-start justify-between">
+                <div>
+                    <div class="text-xs font-semibold text-slate-400">Navigasi</div>
+                    <div id="stat-navigation" class="text-2xl font-extrabold text-slate-900 mt-2">—</div>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card stat-card p-5">
+            <div class="flex items-start justify-between">
+                <div>
+                    <div class="text-xs font-semibold text-slate-400">Media</div>
+                    <div id="stat-media" class="text-2xl font-extrabold text-slate-900 mt-2">—</div>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <i class="fa-regular fa-images"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-5">
+        <div class="card lg:col-span-2">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h2 class="font-bold text-slate-900">Struktur Beranda</h2>
+                    <p class="text-xs text-slate-400 mt-1">Data halaman utama dari D1</p>
+                </div>
+                <button class="btn btn-secondary" data-page="sections"><i class="fa-solid fa-layer-group"></i> Kelola</button>
+            </div>
+            <div id="dashboard-sections" class="p-5">
+                <div class="empty"><i class="fa-solid fa-spinner fa-spin text-xl mb-3"></i><p>Memuat data...</p></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="p-5 border-b border-slate-100">
+                <h2 class="font-bold text-slate-900">Status Sistem</h2>
+                <p class="text-xs text-slate-400 mt-1">Koneksi layanan ZWS</p>
+            </div>
+            <div class="p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600">ZWS CMS API</span>
+                    <span id="status-api" class="badge badge-yellow">Memeriksa</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600">D1 Database</span>
+                    <span id="status-db" class="badge badge-yellow">Memeriksa</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600">Website</span>
+                    <span class="badge badge-green">Online</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600">Media Storage</span>
+                    <span id="status-media" class="badge badge-gray">D1 Media</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="p-5 border-b border-slate-100">
+            <h2 class="font-bold text-slate-900">Informasi Website</h2>
+        </div>
+        <div id="dashboard-info" class="p-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div><div class="text-xs text-slate-400">Nama Website</div><div id="info-name" class="font-semibold text-slate-700 mt-1">—</div></div>
+            <div><div class="text-xs text-slate-400">Judul Website</div><div id="info-title" class="font-semibold text-slate-700 mt-1">—</div></div>
+            <div><div class="text-xs text-slate-400">Email</div><div id="info-email" class="font-semibold text-slate-700 mt-1 break-all">—</div></div>
+            <div><div class="text-xs text-slate-400">WhatsApp</div><div id="info-whatsapp" class="font-semibold text-slate-700 mt-1">—</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- PAGES -->
+<section id="view-pages" class="page-view">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-extrabold text-slate-900">Halaman</h1>
+            <p class="text-sm text-slate-500 mt-1">Kelola halaman website dari database D1.</p>
+        </div>
+        <button id="add-page-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Halaman</button>
+    </div>
+
+    <div class="card">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead><tr><th>Halaman</th><th>Slug</th><th>Status</th><th>Template</th><th>Update</th><th>Aksi</th></tr></thead>
+                <tbody id="pages-table"><tr><td colspan="6"><div class="empty">Memuat data...</div></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SECTIONS -->
+<section id="view-sections" class="page-view">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-extrabold text-slate-900">Section</h1>
+            <p class="text-sm text-slate-500 mt-1">Kelola struktur dan konten section halaman.</p>
+        </div>
+        <button id="add-section-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Section</button>
+    </div>
+
+    <div class="card mb-5 p-5">
+        <label class="label">Pilih Halaman</label>
+        <select id="section-page-select" class="input max-w-xl">
+            <option value="">Memuat halaman...</option>
+        </select>
+    </div>
+
+    <div class="card">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead><tr><th>Section</th><th>Key</th><th>Tipe</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody id="sections-table"><tr><td colspan="6"><div class="empty">Pilih halaman.</div></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- NAVIGATION -->
+<section id="view-navigation" class="page-view">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-extrabold text-slate-900">Navigasi</h1>
+            <p class="text-sm text-slate-500 mt-1">Kelola menu navigasi website.</p>
+        </div>
+        <button id="add-navigation-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Menu</button>
+    </div>
+
+    <div class="card">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead><tr><th>Label</th><th>URL</th><th>Target</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody id="navigation-table"><tr><td colspan="6"><div class="empty">Memuat data...</div></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- MEDIA -->
+<section id="view-media" class="page-view">
+    <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-900">Media</h1>
+        <p class="text-sm text-slate-500 mt-1">Data media yang tercatat di database D1.</p>
+    </div>
+
+    <div class="card">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead><tr><th>Nama</th><th>URL</th><th>Folder</th><th>Tipe</th><th>Ukuran</th><th>Aksi</th></tr></thead>
+                <tbody id="media-table"><tr><td colspan="6"><div class="empty">Memuat data...</div></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="view-settings" class="page-view">
+    <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-900">Pengaturan Website</h1>
+        <p class="text-sm text-slate-500 mt-1">Informasi utama website yang disimpan di D1.</p>
+    </div>
+
+    <form id="settings-form" class="card p-5 sm:p-6">
+        <div class="grid md:grid-cols-2 gap-5">
+            <div><label class="label">Nama Website</label><input id="settings-site-name" class="input" name="site_name"></div>
+            <div><label class="label">Judul Website</label><input id="settings-site-title" class="input" name="site_title"></div>
+            <div><label class="label">Tagline</label><input id="settings-tagline" class="input" name="tagline"></div>
+            <div><label class="label">Logo URL</label><input id="settings-logo" class="input" name="logo_url"></div>
+            <div><label class="label">Favicon URL</label><input id="settings-favicon" class="input" name="favicon_url"></div>
+            <div><label class="label">Email</label><input id="settings-email" class="input" name="contact_email"></div>
+            <div><label class="label">Telepon</label><input id="settings-phone" class="input" name="contact_phone"></div>
+            <div><label class="label">WhatsApp</label><input id="settings-whatsapp" class="input" name="whatsapp"></div>
+            <div><label class="label">Warna Utama</label><input id="settings-primary" class="input" name="primary_color" value="#1463d6"></div>
+            <div><label class="label">Warna Sekunder</label><input id="settings-secondary" class="input" name="secondary_color" value="#ffffff"></div>
+            <div class="md:col-span-2"><label class="label">Deskripsi</label><textarea id="settings-description" class="input min-h-[110px]" name="description"></textarea></div>
+            <div class="md:col-span-2"><label class="label">Alamat</label><textarea id="settings-address" class="input min-h-[90px]" name="address"></textarea></div>
+            <div class="md:col-span-2"><label class="label">Copyright</label><input id="settings-copyright" class="input" name="copyright_text"></div>
+        </div>
+        <div class="mt-6 flex justify-end">
+            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button>
+        </div>
+    </form>
+</section>
+
+<!-- SEO -->
+<section id="view-seo" class="page-view">
+    <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-900">SEO</h1>
+        <p class="text-sm text-slate-500 mt-1">Kelola metadata dan pengaturan SEO website.</p>
+    </div>
+
+    <form id="seo-form" class="card p-5 sm:p-6">
+        <div class="grid md:grid-cols-2 gap-5">
+            <div class="md:col-span-2"><label class="label">Meta Title</label><input id="seo-title" class="input"></div>
+            <div class="md:col-span-2"><label class="label">Meta Description</label><textarea id="seo-description" class="input min-h-[110px]"></textarea></div>
+            <div class="md:col-span-2"><label class="label">Keywords</label><input id="seo-keywords" class="input"></div>
+            <div><label class="label">Canonical URL</label><input id="seo-canonical" class="input"></div>
+            <div><label class="label">Robots</label><input id="seo-robots" class="input" value="index,follow"></div>
+            <div><label class="label">OG Title</label><input id="seo-og-title" class="input"></div>
+            <div><label class="label">OG Image</label><input id="seo-og-image" class="input"></div>
+            <div class="md:col-span-2"><label class="label">OG Description</label><textarea id="seo-og-description" class="input min-h-[100px]"></textarea></div>
+        </div>
+        <div class="mt-6 flex justify-end">
+            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan SEO</button>
+        </div>
+    </form>
+</section>
+
+<!-- CONTACT -->
+<section id="view-contact" class="page-view">
+    <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-900">Kontak</h1>
+        <p class="text-sm text-slate-500 mt-1">Kelola informasi kontak dan media sosial.</p>
+    </div>
+
+    <form id="contact-form" class="card p-5 sm:p-6">
+        <div class="grid md:grid-cols-2 gap-5">
+            <div><label class="label">Email</label><input id="contact-email" class="input"></div>
+            <div><label class="label">WhatsApp</label><input id="contact-whatsapp" class="input"></div>
+            <div><label class="label">Telepon</label><input id="contact-phone" class="input"></div>
+            <div><label class="label">Instagram</label><input id="contact-instagram" class="input"></div>
+            <div><label class="label">Facebook</label><input id="contact-facebook" class="input"></div>
+            <div><label class="label">LinkedIn</label><input id="contact-linkedin" class="input"></div>
+            <div class="md:col-span-2"><label class="label">Website</label><input id="contact-website" class="input"></div>
+        </div>
+        <div class="mt-6 flex justify-end">
+            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan Kontak</button>
+        </div>
+    </form>
+</section>
+
+<!-- USERS -->
+<section id="view-users" class="page-view">
+    <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-900">Pengguna</h1>
+        <p class="text-sm text-slate-500 mt-1">Daftar pengguna administrator yang tersimpan di D1.</p>
+    </div>
+
+    <div class="card">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Status</th><th>Dibuat</th><th>Update</th></tr></thead>
+                <tbody id="users-table"><tr><td colspan="6"><div class="empty">Memuat data...</div></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800">
+        <i class="fa-solid fa-circle-info mr-1"></i>
+        Login ZWS tetap menggunakan Cloudflare Secrets <strong>ADMIN_USERNAME</strong> dan <strong>ADMIN_PASSWORD</strong>. Modul ini hanya membaca data tabel <strong>admin_users</strong>.
+    </div>
+</section>
+
+<!-- REVISIONS -->
+<section id="view-revisions" class="page-view">
+    <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-900">Revisi</h1>
+        <p class="text-sm text-slate-500 mt-1">Riwayat perubahan konten website.</p>
+    </div>
+
+    <div class="card p-8 text-center">
+        <div class="w-14 h-14 rounded-2xl bg-blue-50 text-zws-600 flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+        </div>
+        <h2 class="font-bold text-slate-800">Riwayat revisi belum tersedia</h2>
+        <p class="text-sm text-slate-500 mt-2 max-w-md mx-auto">
+            API <code>/api/cms.js</code> saat ini belum memiliki action untuk membaca atau menyimpan tabel <code>revisions</code>.
+        </p>
+    </div>
+</section>
+
+</main>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal fixed inset-0 z-[80] items-center justify-center p-4 bg-slate-900/50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div>
+                <h3 id="modal-title" class="font-bold text-slate-900">Form</h3>
+                <p id="modal-subtitle" class="text-xs text-slate-400 mt-1"></p>
+            </div>
+            <button id="modal-close" class="w-9 h-9 rounded-lg hover:bg-slate-100 text-slate-500">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="modal-form">
+            <div id="modal-body" class="p-5 overflow-y-auto max-h-[65vh]"></div>
+            <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2">
+                <button type="button" id="modal-cancel" class="btn btn-secondary">Batal</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast fixed right-4 bottom-4 z-[100] max-w-sm">
+    <div class="bg-slate-900 text-white rounded-xl shadow-xl px-4 py-3 flex items-start gap-3">
+        <div id="toast-icon" class="mt-0.5"><i class="fa-solid fa-circle-check"></i></div>
+        <div>
+            <div id="toast-title" class="font-semibold text-sm">Berhasil</div>
+            <div id="toast-message" class="text-xs text-slate-300 mt-0.5"></div>
+        </div>
     </div>
 </div>
 
 <script>
-(function(){
-
+(() => {
 "use strict";
 
-/* =========================================================
-   KONFIGURASI
-========================================================= */
+const API="/api/cms";
+const AUTH="/api/auth";
+const SITE="/";
 
-const API_URL="/api/cms";
-const AUTH_URL="/api/auth";
-
-const MODULES={
-    dashboard:{
-        title:"Dashboard",
-        subtitle:"Kelola seluruh website Anda dari satu tempat.",
-        icon:"fa-solid fa-gauge-high"
-    },
-
-    pages:{
-        title:"Halaman",
-        subtitle:"Kelola halaman website dan kontennya.",
-        icon:"fa-regular fa-file-lines"
-    },
-
-    sections:{
-        title:"Section",
-        subtitle:"Kelola struktur dan section pada halaman website.",
-        icon:"fa-solid fa-layer-group"
-    },
-
-    navigation:{
-        title:"Navigasi",
-        subtitle:"Kelola menu navigasi website.",
-        icon:"fa-solid fa-bars"
-    },
-
-    media:{
-        title:"Media",
-        subtitle:"Kelola gambar dan file media website.",
-        icon:"fa-regular fa-images"
-    },
-
-    settings:{
-        title:"Pengaturan Website",
-        subtitle:"Kelola identitas dan konfigurasi utama website.",
-        icon:"fa-solid fa-gear"
-    },
-
-    seo:{
-        title:"SEO",
-        subtitle:"Kelola pengaturan SEO dan metadata website.",
-        icon:"fa-solid fa-magnifying-glass"
-    },
-
-    contact:{
-        title:"Kontak",
-        subtitle:"Kelola informasi kontak website.",
-        icon:"fa-regular fa-address-book"
-    },
-
-    users:{
-        title:"Pengguna",
-        subtitle:"Kelola pengguna dan akses CMS.",
-        icon:"fa-solid fa-users"
-    },
-
-    revisions:{
-        title:"Revisi",
-        subtitle:"Lihat histori perubahan konten website.",
-        icon:"fa-solid fa-clock-rotate-left"
-    }
+const state={
+    pages:[],
+    sections:[],
+    navigation:[],
+    media:[],
+    users:[],
+    currentPage:"",
+    currentView:"dashboard",
+    modalType:null,
+    modalId:null,
+    loading:false
 };
 
-let currentPage="dashboard";
-let dashboardData=null;
-let refreshTimer=null;
+const $=id=>document.getElementById(id);
 
-/* =========================================================
-   ELEMENT
-========================================================= */
+function escapeHtml(value){
+    return String(value??"")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
 
-const sidebar=document.getElementById("sidebar");
-const overlay=document.getElementById("mobile-overlay");
-const mobileMenu=document.getElementById("mobile-menu");
+function formatDate(value){
+    if(!value)return"—";
+    const date=new Date(String(value).replace(" ","T"));
+    if(Number.isNaN(date.getTime()))return value;
+    return date.toLocaleDateString("id-ID",{
+        day:"2-digit",
+        month:"short",
+        year:"numeric"
+    });
+}
 
-const pageTitle=document.getElementById("page-title");
-const pageSubtitle=document.getElementById("page-subtitle");
+function statusBadge(value){
+    const v=String(value??"").toLowerCase();
+    if(v==="published"||v==="active"||v==="1"||v==="true"){
+        return'<span class="badge badge-green">Aktif</span>';
+    }
+    if(v==="draft"){
+        return'<span class="badge badge-yellow">Draft</span>';
+    }
+    return`<span class="badge badge-gray">${escapeHtml(value||"Tidak aktif")}</span>`;
+}
 
-const currentUser=document.getElementById("current-user");
+function visibleBadge(value){
+    return Number(value)===1
+        ?'<span class="badge badge-green">Tampil</span>'
+        :'<span class="badge badge-gray">Disembunyikan</span>';
+}
 
-const refreshBtn=document.getElementById("refresh-btn");
-const refreshIcon=document.getElementById("refresh-icon");
+function setSystemStatus(id,ok,textOk="Terhubung",textFail="Gagal"){
+    const el=$(id);
+    if(!el)return;
+    el.className=`badge ${ok?"badge-green":"badge-yellow"}`;
+    el.textContent=ok?textOk:textFail;
+}
 
-const dashboardView=document.getElementById("page-dashboard");
-const moduleView=document.getElementById("page-module");
+function showToast(message,type="success"){
+    const toast=$("toast");
+    const title=$("toast-title");
+    const msg=$("toast-message");
+    const icon=$("toast-icon");
+    title.textContent=type==="error"?"Gagal":"Berhasil";
+    msg.textContent=message;
+    icon.innerHTML=type==="error"
+        ?'<i class="fa-solid fa-circle-exclamation text-red-400"></i>'
+        :'<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+    toast.classList.add("show");
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer=setTimeout(()=>toast.classList.remove("show"),3500);
+}
 
-const moduleTitle=document.getElementById("module-title");
-const moduleDescription=document.getElementById("module-description");
-const moduleIcon=document.getElementById("module-icon").querySelector("i");
-const moduleEmptyIcon=document.getElementById("module-empty-icon");
-const moduleEmptyText=document.getElementById("module-empty-text");
+async function apiFetch(action,options={}){
+    const params=new URLSearchParams();
 
-const toast=document.getElementById("toast");
-const toastMessage=document.getElementById("toast-message");
-const toastIcon=document.getElementById("toast-icon");
+    if(action)params.set("action",action);
 
-/* =========================================================
-   FETCH API
-========================================================= */
+    if(options.params){
+        Object.entries(options.params).forEach(([key,value])=>{
+            if(value!==undefined&&value!==null&&value!==""){
+                params.set(key,value);
+            }
+        });
+    }
 
-async function api(url,options={}){
+    const url=`${API}?${params.toString()}`;
 
-    const response=await fetch(url,{
+    const config={
         credentials:"include",
         cache:"no-store",
-        ...options,
         headers:{
-            "Accept":"application/json",
-            ...(options.headers||{})
-        }
-    });
+            Accept:"application/json",
+            ...(options.body?{"Content-Type":"application/json"}:{})
+        },
+        ...options
+    };
+
+    const response=await fetch(url,config);
 
     let data=null;
-
     try{
         data=await response.json();
-    }catch(error){
-        data=null;
+    }catch{
+        throw new Error(`Server mengembalikan response tidak valid (${response.status}).`);
     }
 
-    if(response.status===401){
-
-        window.location.href=
-            "/autentikasi-zws-panel/login.html?redirect="+
-            encodeURIComponent(
-                window.location.pathname+
-                window.location.search
-            );
-
-        throw new Error("Sesi login telah berakhir.");
-    }
-
-    if(!response.ok){
-
-        throw new Error(
-            data?.message||
-            data?.error||
-            "Terjadi kesalahan pada server."
-        );
+    if(!response.ok||data?.success===false){
+        throw new Error(data?.error||data?.message||`Request gagal (${response.status}).`);
     }
 
     return data;
 }
 
-/* =========================================================
-   AUTH SESSION
-========================================================= */
-
 async function checkSession(){
-
     try{
+        const response=await fetch(`${AUTH}?action=session`,{
+            method:"GET",
+            credentials:"include",
+            cache:"no-store",
+            headers:{Accept:"application/json"}
+        });
 
-        const data=await api(
-            AUTH_URL+"?action=session"
-        );
+        const data=await response.json();
 
-        if(
-            !data||
-            data.authenticated!==true
-        ){
-            redirectLogin();
+        if(!data?.authenticated){
+            window.location.replace("/autentikasi-zws-panel/login");
             return false;
         }
 
-        if(data.user){
-
-            currentUser.textContent=
-                data.user.display_name||
-                data.user.username||
-                "Admin";
+        if(data.user?.username){
+            $("user-name").textContent=data.user.username;
         }
 
         return true;
-
     }catch(error){
-
-        console.error(
-            "SESSION ERROR:",
-            error
-        );
-
+        console.error(error);
+        window.location.replace("/autentikasi-zws-panel/login");
         return false;
     }
 }
 
-function redirectLogin(){
-
-    const redirect=
-        window.location.pathname+
-        window.location.search;
-
-    window.location.href=
-        "/autentikasi-zws-panel/login.html?redirect="+
-        encodeURIComponent(redirect);
-}
-
-/* =========================================================
-   LOAD DASHBOARD
-========================================================= */
-
-async function loadDashboard(){
-
-    setRefreshLoading(true);
-
-    setStatus(
-        "status-api-dot",
-        "status-api-text",
-        "loading",
-        "Checking"
-    );
-
+async function logout(){
     try{
-
-        const data=await api(
-            API_URL+"?action=home"
-        );
-
-        dashboardData=data;
-
-        renderDashboard(data);
-
-        setStatus(
-            "status-api-dot",
-            "status-api-text",
-            "online",
-            "Online"
-        );
-
-        setStatus(
-            "status-db-dot",
-            "status-db-text",
-            "online",
-            "Connected"
-        );
-
-        setStatus(
-            "status-media-dot",
-            "status-media-text",
-            "online",
-            "Ready"
-        );
-
-    }catch(error){
-
-        console.error(
-            "DASHBOARD ERROR:",
-            error
-        );
-
-        setStatus(
-            "status-api-dot",
-            "status-api-text",
-            "offline",
-            "Error"
-        );
-
-        setStatus(
-            "status-db-dot",
-            "status-db-text",
-            "offline",
-            "Unavailable"
-        );
-
-        setStatus(
-            "status-media-dot",
-            "status-media-text",
-            "offline",
-            "Unavailable"
-        );
-
-        showToast(
-            error.message||
-            "Gagal memuat dashboard.",
-            "error"
-        );
-
-    }finally{
-
-        setRefreshLoading(false);
-    }
-}
-
-/* =========================================================
-   RENDER DASHBOARD
-========================================================= */
-
-function renderDashboard(data){
-
-    const stats=
-        data?.stats||
-        data?.statistics||
-        {};
-
-    const pages=
-        stats.pages??
-        data?.pages?.length??
-        data?.counts?.pages??
-        0;
-
-    const sections=
-        stats.sections??
-        data?.sections?.length??
-        data?.counts?.sections??
-        0;
-
-    const navigation=
-        stats.navigation??
-        stats.navigations??
-        data?.navigation?.length??
-        data?.navigation_items?.length??
-        data?.counts?.navigation??
-        0;
-
-    const media=
-        stats.media??
-        data?.media?.length??
-        data?.counts?.media??
-        0;
-
-    document.getElementById("stat-pages").textContent=
-        formatNumber(pages);
-
-    document.getElementById("stat-sections").textContent=
-        formatNumber(sections);
-
-    document.getElementById("stat-navigation").textContent=
-        formatNumber(navigation);
-
-    document.getElementById("stat-media").textContent=
-        formatNumber(media);
-
-    /* WEBSITE INFO */
-
-    const settings=
-        data?.site_settings||
-        data?.settings||
-        data?.site||
-        {};
-
-    const siteName=
-        settings.site_name||
-        settings.name||
-        settings.title||
-        data?.site_name||
-        "Website";
-
-    const siteUrl=
-        settings.site_url||
-        settings.url||
-        data?.site_url||
-        window.location.origin;
-
-    document.getElementById(
-        "info-site-name"
-    ).textContent=siteName;
-
-    const siteUrlElement=
-        document.getElementById("info-site-url");
-
-    siteUrlElement.textContent=
-        siteUrl;
-
-    siteUrlElement.href=
-        siteUrl;
-
-    /* SECTION LIST */
-
-    renderHomeSections(
-        data?.sections||
-        data?.home_sections||
-        []
-    );
-}
-
-/* =========================================================
-   RENDER HOME SECTIONS
-========================================================= */
-
-function renderHomeSections(sections){
-
-    const container=
-        document.getElementById(
-            "home-sections-list"
-        );
-
-    if(!Array.isArray(sections)||
-       sections.length===0){
-
-        container.innerHTML=`
-            <div class="p-8 text-center">
-                <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
-                    <i class="fa-solid fa-layer-group"></i>
-                </div>
-                <div class="text-sm font-semibold text-slate-600">
-                    Belum ada section
-                </div>
-                <div class="text-xs text-slate-400 mt-1">
-                    Tambahkan section melalui menu Section.
-                </div>
-            </div>
-        `;
-
-        return;
-    }
-
-    container.innerHTML=
-        sections
-        .slice(0,10)
-        .map((section,index)=>{
-
-            const title=
-                section.title||
-                section.name||
-                section.label||
-                `Section ${index+1}`;
-
-            const type=
-                section.type||
-                section.section_type||
-                "section";
-
-            const status=
-                section.status||
-                (section.is_active===false?
-                    "inactive":
-                    "active"
-                );
-
-            const statusActive=
-                status==="active"||
-                status==="published"||
-                status==="1";
-
-            return`
-                <div class="px-5 py-4 flex items-center justify-between gap-4">
-
-                    <div class="flex items-center gap-3 min-w-0">
-
-                        <div class="w-9 h-9 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-layer-group text-sm"></i>
-                        </div>
-
-                        <div class="min-w-0">
-                            <div class="text-sm font-semibold text-slate-800 truncate">
-                                ${escapeHtml(title)}
-                            </div>
-                            <div class="text-[11px] text-slate-400 mt-0.5">
-                                ${escapeHtml(type)}
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <span class="shrink-0 px-2 py-1 rounded-md text-[10px] font-bold ${
-                        statusActive
-                        ?"bg-emerald-50 text-emerald-600"
-                        :"bg-slate-100 text-slate-500"
-                    }">
-                        ${
-                            statusActive
-                            ?"Aktif"
-                            :"Nonaktif"
-                        }
-                    </span>
-
-                </div>
-            `;
-
-        })
-        .join("");
-}
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-function setStatus(dotId,textId,status,text){
-
-    const dot=document.getElementById(dotId);
-    const label=document.getElementById(textId);
-
-    if(!dot||!label)return;
-
-    dot.className=
-        "w-2.5 h-2.5 rounded-full";
-
-    if(status==="online"){
-
-        dot.classList.add(
-            "bg-emerald-500"
-        );
-
-        label.className=
-            "text-xs text-emerald-600 font-semibold";
-
-    }else if(status==="offline"){
-
-        dot.classList.add(
-            "bg-red-500"
-        );
-
-        label.className=
-            "text-xs text-red-600 font-semibold";
-
-    }else{
-
-        dot.classList.add(
-            "bg-slate-300"
-        );
-
-        label.className=
-            "text-xs text-slate-400";
-    }
-
-    label.textContent=text;
-}
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-function navigate(page,updateUrl=true){
-
-    if(!MODULES[page]){
-        page="dashboard";
-    }
-
-    currentPage=page;
-
-    const config=
-        MODULES[page];
-
-    document
-        .querySelectorAll(".nav-item")
-        .forEach(item=>{
-
-            item.classList.toggle(
-                "active",
-                item.dataset.page===page
-            );
+        await fetch(`${AUTH}?action=logout`,{
+            method:"POST",
+            credentials:"include",
+            cache:"no-store"
         });
-
-    pageTitle.textContent=
-        config.title;
-
-    pageSubtitle.textContent=
-        config.subtitle;
-
-    if(page==="dashboard"){
-
-        dashboardView.classList.remove(
-            "hidden"
-        );
-
-        moduleView.classList.add(
-            "hidden"
-        );
-
-        if(updateUrl){
-            history.replaceState(
-                null,
-                "",
-                window.location.pathname
-            );
-        }
-
-        loadDashboard();
-
-    }else{
-
-        dashboardView.classList.add(
-            "hidden"
-        );
-
-        moduleView.classList.remove(
-            "hidden"
-        );
-
-        moduleTitle.textContent=
-            config.title;
-
-        moduleDescription.textContent=
-            config.subtitle;
-
-        moduleIcon.className=
-            config.icon;
-
-        moduleEmptyIcon.className=
-            config.icon;
-
-        moduleEmptyText.textContent=
-            getModuleText(page);
-
-        if(updateUrl){
-
-            history.replaceState(
-                null,
-                "",
-                "#"+page
-            );
-        }
+    }catch(error){
+        console.warn(error);
     }
-
-    closeMobileMenu();
+    window.location.replace("/autentikasi-zws-panel/login");
 }
 
-/* =========================================================
-   MODULE TEXT
-========================================================= */
+function setView(view){
+    state.currentView=view;
 
-function getModuleText(page){
-
-    const texts={
-
-        pages:
-            "Modul ini nantinya digunakan untuk membuat, mengedit, menghapus, menerbitkan, dan mengatur halaman website melalui tabel pages.",
-
-        sections:
-            "Modul ini digunakan untuk menyusun section halaman utama, mengatur urutan, status, konten, dan item section.",
-
-        navigation:
-            "Modul ini digunakan untuk mengatur menu navbar dan struktur navigasi website.",
-
-        media:
-            "Modul ini digunakan untuk mengelola file media yang tersimpan pada Cloudflare R2 dan metadata-nya di D1.",
-
-        settings:
-            "Modul ini digunakan untuk mengatur identitas website, logo, favicon, informasi umum, dan konfigurasi website.",
-
-        seo:
-            "Modul ini digunakan untuk mengatur title, description, canonical, Open Graph, robots, dan metadata SEO.",
-
-        contact:
-            "Modul ini digunakan untuk mengatur email, nomor telepon, alamat, WhatsApp, dan informasi kontak website.",
-
-        users:
-            "Modul ini digunakan untuk mengelola pengguna CMS dan hak akses administrator.",
-
-        revisions:
-            "Modul ini digunakan untuk melihat histori perubahan konten dan versi sebelumnya."
-    };
-
-    return texts[page]||
-        "Modul pengelolaan website.";
-}
-
-/* =========================================================
-   REFRESH
-========================================================= */
-
-function setRefreshLoading(loading){
-
-    if(loading){
-
-        refreshIcon.className=
-            "fa-solid fa-circle-notch loading";
-
-        refreshBtn.disabled=true;
-
-    }else{
-
-        refreshIcon.className=
-            "fa-solid fa-rotate";
-
-        refreshBtn.disabled=false;
-    }
-}
-
-refreshBtn.addEventListener(
-    "click",
-    function(){
-
-        if(currentPage==="dashboard"){
-            loadDashboard();
-        }else{
-            showToast(
-                "Modul akan memuat data setelah API modul tersedia.",
-                "info"
-            );
-        }
-    }
-);
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-document
-    .getElementById("logout-btn")
-    .addEventListener(
-        "click",
-        async function(){
-
-            const button=this;
-
-            button.disabled=true;
-
-            try{
-
-                await api(
-                    AUTH_URL+"?action=logout",
-                    {
-                        method:"POST"
-                    }
-                );
-
-            }catch(error){
-
-                console.error(
-                    "LOGOUT ERROR:",
-                    error
-                );
-
-            }finally{
-
-                window.location.replace(
-                    "/autentikasi-zws-panel/login.html"
-                );
-            }
-        }
-    );
-
-/* =========================================================
-   NAV CLICK
-========================================================= */
-
-document
-    .querySelectorAll("[data-page]")
-    .forEach(button=>{
-
-        button.addEventListener(
-            "click",
-            function(){
-
-                navigate(
-                    this.dataset.page
-                );
-            }
-        );
+    document.querySelectorAll(".page-view").forEach(el=>{
+        el.classList.toggle("active",el.id===`view-${view}`);
     });
 
-/* =========================================================
-   MOBILE MENU
-========================================================= */
+    document.querySelectorAll(".nav-item[data-page]").forEach(el=>{
+        el.classList.toggle("active",el.dataset.page===view);
+    });
 
-mobileMenu.addEventListener(
-    "click",
-    function(){
+    const titles={
+        dashboard:["Dashboard","Ringkasan CMS website Anda"],
+        pages:["Halaman","Kelola halaman website"],
+        sections:["Section","Kelola struktur konten halaman"],
+        navigation:["Navigasi","Kelola menu website"],
+        media:["Media","Kelola media website"],
+        settings:["Pengaturan Website","Konfigurasi informasi utama website"],
+        seo:["SEO","Pengaturan optimasi mesin pencari"],
+        contact:["Kontak","Informasi kontak dan sosial media"],
+        users:["Pengguna","Pengguna administrator"],
+        revisions:["Revisi","Riwayat perubahan konten"]
+    };
 
-        sidebar.classList.add(
-            "open"
-        );
+    const title=titles[view]||titles.dashboard;
+    $("topbar-title").textContent=title[0];
+    $("topbar-subtitle").textContent=title[1];
 
-        overlay.classList.add(
-            "show"
-        );
-    }
-);
+    closeMobileMenu();
 
-overlay.addEventListener(
-    "click",
-    closeMobileMenu
-);
-
-function closeMobileMenu(){
-
-    sidebar.classList.remove(
-        "open"
-    );
-
-    overlay.classList.remove(
-        "show"
-    );
+    loadView(view);
 }
 
-/* =========================================================
-   HASH ROUTING
-========================================================= */
-
-function loadHash(){
-
-    const hash=
-        window.location.hash
-        .replace("#","")
-        .trim();
-
-    if(hash&&MODULES[hash]){
-        navigate(hash,false);
-    }else{
-        navigate("dashboard",false);
+async function loadView(view){
+    try{
+        if(view==="dashboard")await loadDashboard();
+        if(view==="pages")await loadPages();
+        if(view==="sections"){
+            await loadPagesForSelect();
+            if(state.currentPage)await loadSections(state.currentPage);
+        }
+        if(view==="navigation")await loadNavigation();
+        if(view==="media")await loadMedia();
+        if(view==="settings")await loadSettings();
+        if(view==="seo")await loadSeo();
+        if(view==="contact")await loadContact();
+        if(view==="users")await loadUsers();
+    }catch(error){
+        console.error(error);
+        showToast(error.message||"Gagal memuat data.","error");
     }
 }
 
-window.addEventListener(
-    "hashchange",
-    loadHash
-);
+/* DASHBOARD */
 
-/* =========================================================
-   TOAST
-========================================================= */
+async function loadDashboard(){
+    const errorBox=$("dashboard-error");
+    errorBox.classList.add("hidden");
 
-let toastTimer=null;
+    try{
+        setSystemStatus("status-api",true,"Online");
+        const result=await apiFetch("home");
+        const data=result.data||{};
 
-function showToast(message,type="success"){
+        setSystemStatus("status-db",true,"Terhubung","Gagal");
 
-    clearTimeout(toastTimer);
+        const pages=await apiFetch("pages");
+        const navigation=await apiFetch("navigation");
+        const media=await apiFetch("media");
 
-    toastMessage.textContent=
-        message;
+        state.pages=pages.data||[];
+        state.navigation=navigation.data||[];
+        state.media=media.data||[];
 
-    toastIcon.className=
-        "fa-solid";
+        let sectionCount=0;
+        if(data.page?.id){
+            try{
+                const sections=await apiFetch("sections",{
+                    params:{page_id:data.page.id}
+                });
+                sectionCount=(sections.data||[]).length;
+            }catch{}
+        }
 
-    if(type==="error"){
+        $("stat-pages").textContent=state.pages.length;
+        $("stat-sections").textContent=sectionCount;
+        $("stat-navigation").textContent=state.navigation.length;
+        $("stat-media").textContent=state.media.length;
 
-        toastIcon.classList.add(
-            "fa-circle-xmark",
-            "text-red-400"
-        );
+        const settings=data.settings||{};
+        $("info-name").textContent=settings.site_name||"—";
+        $("info-title").textContent=settings.site_title||"—";
+        $("info-email").textContent=settings.contact_email||"—";
+        $("info-whatsapp").textContent=settings.whatsapp||"—";
 
-    }else if(type==="info"){
+        const sectionBox=$("dashboard-sections");
 
-        toastIcon.classList.add(
-            "fa-circle-info",
-            "text-blue-400"
-        );
+        if(data.sections?.length){
+            sectionBox.innerHTML=data.sections.map((section,index)=>`
+                <div class="flex items-center gap-3 py-3 ${index?"border-t border-slate-100":""}">
+                    <div class="w-9 h-9 rounded-lg bg-blue-50 text-zws-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-layer-group text-xs"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-semibold text-sm text-slate-800 truncate">${escapeHtml(section.title||section.section_key||"Section")}</div>
+                        <div class="text-xs text-slate-400 mt-0.5">${escapeHtml(section.section_type||"content")} · ${section.items?.length||0} item</div>
+                    </div>
+                    ${visibleBadge(section.is_visible)}
+                </div>
+            `).join("");
+        }else{
+            sectionBox.innerHTML=`
+                <div class="empty">
+                    <i class="fa-regular fa-folder-open text-2xl mb-3"></i>
+                    <p>Belum ada section pada halaman utama.</p>
+                </div>
+            `;
+        }
 
-    }else{
-
-        toastIcon.classList.add(
-            "fa-circle-check",
-            "text-emerald-400"
-        );
+        setSystemStatus("status-media",true,"D1 aktif");
+    }catch(error){
+        setSystemStatus("status-api",false,"Online","Error");
+        setSystemStatus("status-db",false,"Terhubung","Tidak terhubung");
+        errorBox.textContent=`D1 / API: ${error.message}`;
+        errorBox.classList.remove("hidden");
+        throw error;
     }
-
-    toast.classList.remove(
-        "hidden"
-    );
-
-    toastTimer=setTimeout(
-        ()=>{
-            toast.classList.add(
-                "hidden"
-            );
-        },
-        3500
-    );
 }
 
-/* =========================================================
-   UTILITIES
-========================================================= */
+/* PAGES */
 
-function formatNumber(value){
+async function loadPages(){
+    const tbody=$("pages-table");
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat data...</div></div></td></tr>';
 
-    const number=
-        Number(value)||0;
+    const result=await apiFetch("pages");
+    state.pages=result.data||[];
 
-    return new Intl.NumberFormat(
-        "id-ID"
-    ).format(number);
-}
-
-function escapeHtml(value){
-
-    return String(
-        value??""
-    )
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-/* =========================================================
-   START
-========================================================= */
-
-(async function(){
-
-    const authenticated=
-        await checkSession();
-
-    if(!authenticated){
+    if(!state.pages.length){
+        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada halaman.</div></td></tr>';
         return;
     }
 
-    loadHash();
+    tbody.innerHTML=state.pages.map(page=>`
+        <tr>
+            <td>
+                <div class="font-semibold text-slate-800">${escapeHtml(page.title||"Tanpa judul")}</div>
+                <div class="text-xs text-slate-400 mt-1">ID ${escapeHtml(page.id)}</div>
+            </td>
+            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">${escapeHtml(page.slug||"—")}</code></td>
+            <td>${statusBadge(page.status)}</td>
+            <td><span class="text-sm text-slate-600">${escapeHtml(page.template||"—")}</span></td>
+            <td class="text-xs text-slate-500">${formatDate(page.updated_at||page.created_at)}</td>
+            <td>
+                <div class="flex gap-1.5">
+                    <button class="btn btn-secondary !p-2" title="Edit" onclick="window.ZWSCMS.editPage(${Number(page.id)})"><i class="fa-solid fa-pen text-xs"></i></button>
+                    <button class="btn btn-danger !p-2" title="Hapus" onclick="window.ZWSCMS.deletePage(${Number(page.id)})"><i class="fa-solid fa-trash text-xs"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join("");
+}
 
+async function loadPagesForSelect(){
+    const select=$("section-page-select");
+    const result=await apiFetch("pages");
+    state.pages=result.data||[];
+
+    if(!state.pages.length){
+        select.innerHTML='<option value="">Belum ada halaman</option>';
+        return;
+    }
+
+    select.innerHTML=state.pages.map(page=>`
+        <option value="${escapeHtml(page.id)}">${escapeHtml(page.title||"Tanpa judul")} — ${escapeHtml(page.slug||"")}</option>
+    `).join("");
+
+    if(state.currentPage&&state.pages.some(p=>String(p.id)===String(state.currentPage))){
+        select.value=state.currentPage;
+    }else{
+        const home=state.pages.find(p=>p.slug==="/");
+        state.currentPage=String(home?.id||state.pages[0].id);
+        select.value=state.currentPage;
+    }
+}
+
+function openPageModal(page=null){
+    state.modalType="page";
+    state.modalId=page?.id||null;
+
+    $("modal-title").textContent=page?"Edit Halaman":"Tambah Halaman";
+    $("modal-subtitle").textContent=page?"Perbarui data halaman":"Buat halaman baru";
+    $("modal-body").innerHTML=`
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <label class="label">Judul Halaman *</label>
+                <input id="m-title" class="input" required value="${escapeHtml(page?.title||"")}">
+            </div>
+            <div>
+                <label class="label">Slug *</label>
+                <input id="m-slug" class="input" required placeholder="/" value="${escapeHtml(page?.slug||"")}">
+            </div>
+            <div>
+                <label class="label">Status</label>
+                <select id="m-status" class="input">
+                    <option value="draft" ${page?.status==="draft"?"selected":""}>Draft</option>
+                    <option value="published" ${page?.status==="published"?"selected":""}>Published</option>
+                    <option value="scheduled" ${page?.status==="scheduled"?"selected":""}>Scheduled</option>
+                </select>
+            </div>
+            <div>
+                <label class="label">Template</label>
+                <input id="m-template" class="input" value="${escapeHtml(page?.template||"landing")}">
+            </div>
+            <div>
+                <label class="label">Canonical URL</label>
+                <input id="m-canonical" class="input" value="${escapeHtml(page?.canonical_url||"")}">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Meta Title</label>
+                <input id="m-meta-title" class="input" value="${escapeHtml(page?.meta_title||"")}">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Meta Description</label>
+                <textarea id="m-meta-description" class="input min-h-[90px]">${escapeHtml(page?.meta_description||"")}</textarea>
+            </div>
+            <div>
+                <label class="label">OG Title</label>
+                <input id="m-og-title" class="input" value="${escapeHtml(page?.og_title||"")}">
+            </div>
+            <div>
+                <label class="label">OG Image</label>
+                <input id="m-og-image" class="input" value="${escapeHtml(page?.og_image||"")}">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">OG Description</label>
+                <textarea id="m-og-description" class="input min-h-[90px]">${escapeHtml(page?.og_description||"")}</textarea>
+            </div>
+        </div>
+    `;
+    $("modal").classList.add("show");
+}
+
+async function savePage(){
+    const body={
+        title:$("m-title").value.trim(),
+        slug:$("m-slug").value.trim(),
+        status:$("m-status").value,
+        template:$("m-template").value.trim()||"landing",
+        canonical_url:$("m-canonical").value.trim(),
+        meta_title:$("m-meta-title").value.trim(),
+        meta_description:$("m-meta-description").value.trim(),
+        og_title:$("m-og-title").value.trim(),
+        og_description:$("m-og-description").value.trim(),
+        og_image:$("m-og-image").value.trim()
+    };
+
+    if(!body.title||!body.slug){
+        showToast("Judul dan slug wajib diisi.","error");
+        return;
+    }
+
+    const method=state.modalId?"PUT":"POST";
+
+    if(state.modalId)body.id=state.modalId;
+
+    await apiFetch("page",{
+        method,
+        body:JSON.stringify(body)
+    });
+
+    closeModal();
+    showToast(state.modalId?"Halaman berhasil diperbarui.":"Halaman berhasil dibuat.");
+    await loadPages();
+}
+
+async function deletePage(id){
+    const page=state.pages.find(item=>Number(item.id)===Number(id));
+    if(!confirm(`Hapus halaman "${page?.title||"ini"}"?`))return;
+
+    await apiFetch("page",{
+        method:"DELETE",
+        params:{id}
+    });
+
+    showToast("Halaman berhasil dihapus.");
+    await loadPages();
+}
+
+async function editPage(id){
+    const page=state.pages.find(item=>Number(item.id)===Number(id));
+    if(page)openPageModal(page);
+}
+
+/* SECTIONS */
+
+async function loadSections(pageId){
+    const tbody=$("sections-table");
+    state.currentPage=String(pageId);
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat section...</div></div></td></tr>';
+
+    const result=await apiFetch("sections",{
+        params:{page_id:pageId}
+    });
+
+    state.sections=result.data||[];
+
+    if(!state.sections.length){
+        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada section pada halaman ini.</div></td></tr>';
+        return;
+    }
+
+    tbody.innerHTML=state.sections.map(section=>`
+        <tr>
+            <td>
+                <div class="font-semibold text-slate-800">${escapeHtml(section.title||section.section_key||"Tanpa judul")}</div>
+                <div class="text-xs text-slate-400 mt-1">ID ${escapeHtml(section.id)}</div>
+            </td>
+            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">${escapeHtml(section.section_key||"—")}</code></td>
+            <td>${escapeHtml(section.section_type||"content")}</td>
+            <td>${escapeHtml(section.sort_order??0)}</td>
+            <td>${visibleBadge(section.is_visible)}</td>
+            <td>
+                <div class="flex gap-1.5">
+                    <button class="btn btn-secondary !p-2" onclick="window.ZWSCMS.editSection(${Number(section.id)})"><i class="fa-solid fa-pen text-xs"></i></button>
+                    <button class="btn btn-danger !p-2" onclick="window.ZWSCMS.deleteSection(${Number(section.id)})"><i class="fa-solid fa-trash text-xs"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join("");
+}
+
+function openSectionModal(section=null){
+    state.modalType="section";
+    state.modalId=section?.id||null;
+
+    $("modal-title").textContent=section?"Edit Section":"Tambah Section";
+    $("modal-subtitle").textContent=section?"Perbarui section":"Tambahkan section ke halaman terpilih";
+
+    $("modal-body").innerHTML=`
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <label class="label">Section Key</label>
+                <input id="m-section-key" class="input" placeholder="hero" value="${escapeHtml(section?.section_key||"")}">
+            </div>
+            <div>
+                <label class="label">Tipe Section</label>
+                <input id="m-section-type" class="input" placeholder="hero / content / cards" value="${escapeHtml(section?.section_type||"content")}">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Judul</label>
+                <input id="m-section-title" class="input" value="${escapeHtml(section?.title||"")}">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Subtitle</label>
+                <input id="m-section-subtitle" class="input" value="${escapeHtml(section?.subtitle||"")}">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Content / HTML</label>
+                <textarea id="m-section-content" class="input min-h-[160px]">${escapeHtml(section?.content||"")}</textarea>
+            </div>
+            <div>
+                <label class="label">Urutan</label>
+                <input id="m-section-order" type="number" class="input" value="${escapeHtml(section?.sort_order??0)}">
+            </div>
+            <div>
+                <label class="label">Tampilan</label>
+                <select id="m-section-visible" class="input">
+                    <option value="1" ${Number(section?.is_visible??1)===1?"selected":""}>Tampilkan</option>
+                    <option value="0" ${Number(section?.is_visible)===0?"selected":""}>Sembunyikan</option>
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Settings JSON</label>
+                <textarea id="m-section-settings" class="input min-h-[100px] font-mono text-xs">${escapeHtml(section?.settings_json||"{}")}</textarea>
+            </div>
+        </div>
+    `;
+    $("modal").classList.add("show");
+}
+
+async function saveSection(){
+    const body={
+        page_id:Number(state.currentPage),
+        section_key:$("m-section-key").value.trim(),
+        section_type:$("m-section-type").value.trim()||"content",
+        title:$("m-section-title").value.trim(),
+        subtitle:$("m-section-subtitle").value.trim(),
+        content:$("m-section-content").value,
+        settings_json:$("m-section-settings").value.trim()||"{}",
+        sort_order:Number($("m-section-order").value||0),
+        is_visible:Number($("m-section-visible").value)
+    };
+
+    if(!body.page_id){
+        showToast("Pilih halaman terlebih dahulu.","error");
+        return;
+    }
+
+    try{
+        JSON.parse(body.settings_json);
+    }catch{
+        showToast("Settings JSON tidak valid.","error");
+        return;
+    }
+
+    const method=state.modalId?"PUT":"POST";
+    if(state.modalId)body.id=state.modalId;
+
+    await apiFetch("section",{
+        method,
+        body:JSON.stringify(body)
+    });
+
+    closeModal();
+    showToast(state.modalId?"Section berhasil diperbarui.":"Section berhasil dibuat.");
+    await loadSections(state.currentPage);
+}
+
+async function editSection(id){
+    const section=state.sections.find(item=>Number(item.id)===Number(id));
+    if(section)openSectionModal(section);
+}
+
+async function deleteSection(id){
+    const section=state.sections.find(item=>Number(item.id)===Number(id));
+    if(!confirm(`Hapus section "${section?.title||section?.section_key||id}"?`))return;
+
+    await apiFetch("section",{
+        method:"DELETE",
+        params:{id}
+    });
+
+    showToast("Section berhasil dihapus.");
+    await loadSections(state.currentPage);
+}
+
+/* NAVIGATION */
+
+async function loadNavigation(){
+    const tbody=$("navigation-table");
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat data...</div></div></td></tr>';
+
+    const result=await apiFetch("navigation");
+    state.navigation=result.data||[];
+
+    if(!state.navigation.length){
+        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada menu navigasi.</div></td></tr>';
+        return;
+    }
+
+    tbody.innerHTML=state.navigation.map(item=>`
+        <tr>
+            <td><div class="font-semibold text-slate-800">${escapeHtml(item.label||"Tanpa label")}</div></td>
+            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">${escapeHtml(item.url||"#")}</code></td>
+            <td>${escapeHtml(item.target||"_self")}</td>
+            <td>${escapeHtml(item.sort_order??0)}</td>
+            <td>${visibleBadge(item.is_visible)}</td>
+            <td>
+                <div class="flex gap-1.5">
+                    <button class="btn btn-secondary !p-2" onclick="window.ZWSCMS.editNavigation(${Number(item.id)})"><i class="fa-solid fa-pen text-xs"></i></button>
+                    <button class="btn btn-danger !p-2" onclick="window.ZWSCMS.deleteNavigation(${Number(item.id)})"><i class="fa-solid fa-trash text-xs"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join("");
+}
+
+function openNavigationModal(item=null){
+    state.modalType="navigation";
+    state.modalId=item?.id||null;
+
+    $("modal-title").textContent=item?"Edit Menu":"Tambah Menu";
+    $("modal-subtitle").textContent=item?"Perbarui menu navigasi":"Tambahkan menu navigasi";
+
+    $("modal-body").innerHTML=`
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <label class="label">Label *</label>
+                <input id="m-nav-label" class="input" required value="${escapeHtml(item?.label||"")}">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">URL *</label>
+                <input id="m-nav-url" class="input" required placeholder="/tentang" value="${escapeHtml(item?.url||"")}">
+            </div>
+            <div>
+                <label class="label">Target</label>
+                <select id="m-nav-target" class="input">
+                    <option value="_self" ${item?.target!=="_blank"?"selected":""}>Tab yang sama</option>
+                    <option value="_blank" ${item?.target==="_blank"?"selected":""}>Tab baru</option>
+                </select>
+            </div>
+            <div>
+                <label class="label">Urutan</label>
+                <input id="m-nav-order" type="number" class="input" value="${escapeHtml(item?.sort_order??0)}">
+            </div>
+            <div>
+                <label class="label">Tampilan</label>
+                <select id="m-nav-visible" class="input">
+                    <option value="1" ${Number(item?.is_visible??1)===1?"selected":""}>Tampilkan</option>
+                    <option value="0" ${Number(item?.is_visible)===0?"selected":""}>Sembunyikan</option>
+                </select>
+            </div>
+        </div>
+    `;
+
+    $("modal").classList.add("show");
+}
+
+async function saveNavigation(){
+    const body={
+        label:$("m-nav-label").value.trim(),
+        url:$("m-nav-url").value.trim()||"#",
+        target:$("m-nav-target").value,
+        sort_order:Number($("m-nav-order").value||0),
+        is_visible:Number($("m-nav-visible").value)
+    };
+
+    if(!body.label){
+        showToast("Label menu wajib diisi.","error");
+        return;
+    }
+
+    const method=state.modalId?"PUT":"POST";
+    if(state.modalId)body.id=state.modalId;
+
+    await apiFetch("navigation",{
+        method,
+        body:JSON.stringify(body)
+    });
+
+    closeModal();
+    showToast(state.modalId?"Menu berhasil diperbarui.":"Menu berhasil ditambahkan.");
+    await loadNavigation();
+}
+
+async function editNavigation(id){
+    const item=state.navigation.find(x=>Number(x.id)===Number(id));
+    if(item)openNavigationModal(item);
+}
+
+async function deleteNavigation(id){
+    const item=state.navigation.find(x=>Number(x.id)===Number(id));
+    if(!confirm(`Hapus menu "${item?.label||id}"?`))return;
+
+    await apiFetch("navigation",{
+        method:"DELETE",
+        params:{id}
+    });
+
+    showToast("Menu berhasil dihapus.");
+    await loadNavigation();
+}
+
+/* MEDIA */
+
+async function loadMedia(){
+    const tbody=$("media-table");
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat data...</div></div></td></tr>';
+
+    const result=await apiFetch("media");
+    state.media=result.data||[];
+
+    if(!state.media.length){
+        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada data media.</div></td></tr>';
+        return;
+    }
+
+    tbody.innerHTML=state.media.map(item=>`
+        <tr>
+            <td>
+                <div class="font-semibold text-slate-800">${escapeHtml(item.name||item.filename||item.file_name||"Media")}</div>
+                <div class="text-xs text-slate-400 mt-1">ID ${escapeHtml(item.id)}</div>
+            </td>
+            <td>
+                <div class="max-w-[250px] truncate text-xs text-blue-600" title="${escapeHtml(item.url||item.public_url||"")}">${escapeHtml(item.url||item.public_url||"—")}</div>
+            </td>
+            <td>${escapeHtml(item.folder||"—")}</td>
+            <td>${escapeHtml(item.mime_type||item.type||"—")}</td>
+            <td>${escapeHtml(item.size||item.file_size||"—")}</td>
+            <td>
+                <button class="btn btn-danger !p-2" onclick="window.ZWSCMS.deleteMedia(${Number(item.id)})"><i class="fa-solid fa-trash text-xs"></i></button>
+            </td>
+        </tr>
+    `).join("");
+}
+
+async function deleteMedia(id){
+    if(!confirm("Hapus data media ini dari database?"))return;
+
+    await apiFetch("media",{
+        method:"DELETE",
+        params:{id}
+    });
+
+    showToast("Data media berhasil dihapus.");
+    await loadMedia();
+}
+
+/* SETTINGS */
+
+async function loadSettings(){
+    const result=await apiFetch("settings");
+    const data=result.data||{};
+
+    $("settings-site-name").value=data.site_name||"";
+    $("settings-site-title").value=data.site_title||"";
+    $("settings-tagline").value=data.tagline||"";
+    $("settings-logo").value=data.logo_url||"";
+    $("settings-favicon").value=data.favicon_url||"";
+    $("settings-email").value=data.contact_email||"";
+    $("settings-phone").value=data.contact_phone||"";
+    $("settings-whatsapp").value=data.whatsapp||"";
+    $("settings-primary").value=data.primary_color||"#1463d6";
+    $("settings-secondary").value=data.secondary_color||"#ffffff";
+    $("settings-description").value=data.description||"";
+    $("settings-address").value=data.address||"";
+    $("settings-copyright").value=data.copyright_text||"";
+}
+
+async function saveSettings(){
+    const body={
+        site_name:$("settings-site-name").value.trim(),
+        site_title:$("settings-site-title").value.trim(),
+        tagline:$("settings-tagline").value.trim(),
+        logo_url:$("settings-logo").value.trim(),
+        favicon_url:$("settings-favicon").value.trim(),
+        contact_email:$("settings-email").value.trim(),
+        contact_phone:$("settings-phone").value.trim(),
+        whatsapp:$("settings-whatsapp").value.trim(),
+        primary_color:$("settings-primary").value.trim()||"#1463d6",
+        secondary_color:$("settings-secondary").value.trim()||"#ffffff",
+        description:$("settings-description").value,
+        address:$("settings-address").value,
+        copyright_text:$("settings-copyright").value.trim()
+    };
+
+    await apiFetch("settings",{
+        method:"POST",
+        body:JSON.stringify(body)
+    });
+
+    showToast("Pengaturan website berhasil disimpan.");
+}
+
+/* SEO */
+
+async function loadSeo(){
+    const result=await apiFetch("seo");
+    const data=result.data||{};
+
+    $("seo-title").value=data.meta_title||"";
+    $("seo-description").value=data.meta_description||"";
+    $("seo-keywords").value=data.keywords||"";
+    $("seo-canonical").value=data.canonical_url||"";
+    $("seo-robots").value=data.robots||"index,follow";
+    $("seo-og-title").value=data.og_title||"";
+    $("seo-og-description").value=data.og_description||"";
+    $("seo-og-image").value=data.og_image||"";
+}
+
+async function saveSeo(){
+    const body={
+        meta_title:$("seo-title").value.trim(),
+        meta_description:$("seo-description").value,
+        keywords:$("seo-keywords").value.trim(),
+        canonical_url:$("seo-canonical").value.trim(),
+        robots:$("seo-robots").value.trim()||"index,follow",
+        og_title:$("seo-og-title").value.trim(),
+        og_description:$("seo-og-description").value,
+        og_image:$("seo-og-image").value.trim()
+    };
+
+    await apiFetch("seo",{
+        method:"POST",
+        body:JSON.stringify(body)
+    });
+
+    showToast("SEO berhasil disimpan.");
+}
+
+/* CONTACT */
+
+async function loadContact(){
+    const result=await apiFetch("contact");
+    const data=result.data||{};
+
+    $("contact-email").value=data.email||"";
+    $("contact-whatsapp").value=data.whatsapp||"";
+    $("contact-phone").value=data.phone||"";
+    $("contact-instagram").value=data.instagram||"";
+    $("contact-facebook").value=data.facebook||"";
+    $("contact-linkedin").value=data.linkedin||"";
+    $("contact-website").value=data.website||"";
+}
+
+async function saveContact(){
+    const body={
+        email:$("contact-email").value.trim(),
+        whatsapp:$("contact-whatsapp").value.trim(),
+        phone:$("contact-phone").value.trim(),
+        instagram:$("contact-instagram").value.trim(),
+        facebook:$("contact-facebook").value.trim(),
+        linkedin:$("contact-linkedin").value.trim(),
+        website:$("contact-website").value.trim()
+    };
+
+    await apiFetch("contact",{
+        method:"POST",
+        body:JSON.stringify(body)
+    });
+
+    showToast("Kontak berhasil disimpan.");
+}
+
+/* USERS */
+
+async function loadUsers(){
+    const tbody=$("users-table");
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat data...</div></div></td></tr>';
+
+    const result=await apiFetch("users");
+    state.users=result.data||[];
+
+    if(!state.users.length){
+        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada pengguna pada tabel admin_users.</div></td></tr>';
+        return;
+    }
+
+    tbody.innerHTML=state.users.map(user=>`
+        <tr>
+            <td><div class="font-semibold text-slate-800">${escapeHtml(user.username||"—")}</div></td>
+            <td>${escapeHtml(user.display_name||"—")}</td>
+            <td><span class="badge badge-blue">${escapeHtml(user.role||"admin")}</span></td>
+            <td>${Number(user.is_active)===1?'<span class="badge badge-green">Aktif</span>':'<span class="badge badge-gray">Nonaktif</span>'}</td>
+            <td class="text-xs text-slate-500">${formatDate(user.created_at)}</td>
+            <td class="text-xs text-slate-500">${formatDate(user.updated_at)}</td>
+        </tr>
+    `).join("");
+}
+
+/* MODAL */
+
+function closeModal(){
+    $("modal").classList.remove("show");
+    $("modal-body").innerHTML="";
+    state.modalType=null;
+    state.modalId=null;
+}
+
+async function handleModalSubmit(event){
+    event.preventDefault();
+
+    try{
+        if(state.modalType==="page")await savePage();
+        if(state.modalType==="section")await saveSection();
+        if(state.modalType==="navigation")await saveNavigation();
+    }catch(error){
+        console.error(error);
+        showToast(error.message||"Gagal menyimpan data.","error");
+    }
+}
+
+/* MOBILE */
+
+function openMobileMenu(){
+    $("sidebar").classList.add("open");
+    $("mobile-overlay").classList.add("show");
+}
+
+function closeMobileMenu(){
+    $("sidebar").classList.remove("open");
+    $("mobile-overlay").classList.remove("show");
+}
+
+/* EVENTS */
+
+document.querySelectorAll("[data-page]").forEach(button=>{
+    button.addEventListener("click",()=>{
+        const page=button.dataset.page;
+        if(page)setView(page);
+    });
+});
+
+$("mobile-menu").addEventListener("click",openMobileMenu);
+$("mobile-overlay").addEventListener("click",closeMobileMenu);
+$("logout-btn").addEventListener("click",logout);
+
+$("refresh-btn").addEventListener("click",async()=>{
+    const icon=$("refresh-btn").querySelector("i");
+    icon.classList.add("fa-spin");
+
+    try{
+        await loadView(state.currentView);
+        showToast("Data berhasil diperbarui.");
+    }catch(error){
+        showToast(error.message||"Refresh gagal.","error");
+    }finally{
+        setTimeout(()=>icon.classList.remove("fa-spin"),400);
+    }
+});
+
+$("add-page-btn").addEventListener("click",()=>openPageModal());
+
+$("add-section-btn").addEventListener("click",()=>{
+    if(!state.currentPage){
+        showToast("Pilih halaman terlebih dahulu.","error");
+        return;
+    }
+    openSectionModal();
+});
+
+$("add-navigation-btn").addEventListener("click",()=>openNavigationModal());
+
+$("section-page-select").addEventListener("change",async event=>{
+    state.currentPage=event.target.value;
+    try{
+        await loadSections(state.currentPage);
+    }catch(error){
+        showToast(error.message||"Gagal memuat section.","error");
+    }
+});
+
+$("settings-form").addEventListener("submit",async event=>{
+    event.preventDefault();
+    try{
+        await saveSettings();
+    }catch(error){
+        showToast(error.message||"Gagal menyimpan pengaturan.","error");
+    }
+});
+
+$("seo-form").addEventListener("submit",async event=>{
+    event.preventDefault();
+    try{
+        await saveSeo();
+    }catch(error){
+        showToast(error.message||"Gagal menyimpan SEO.","error");
+    }
+});
+
+$("contact-form").addEventListener("submit",async event=>{
+    event.preventDefault();
+    try{
+        await saveContact();
+    }catch(error){
+        showToast(error.message||"Gagal menyimpan kontak.","error");
+    }
+});
+
+$("modal-form").addEventListener("submit",handleModalSubmit);
+$("modal-close").addEventListener("click",closeModal);
+$("modal-cancel").addEventListener("click",closeModal);
+
+$("modal").addEventListener("click",event=>{
+    if(event.target===$("modal"))closeModal();
+});
+
+window.ZWSCMS={
+    editPage,
+    deletePage,
+    editSection,
+    deleteSection,
+    editNavigation,
+    deleteNavigation,
+    deleteMedia
+};
+
+/* START */
+
+(async()=>{
+    const authenticated=await checkSession();
+    if(!authenticated)return;
+
+    try{
+        await loadDashboard();
+    }catch(error){
+        console.error("Initial dashboard error:",error);
+    }
 })();
 
 })();
