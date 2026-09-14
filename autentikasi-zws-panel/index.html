@@ -77,7 +77,8 @@ button{cursor:pointer}
 .toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
 .loading{animation:pulse 1.4s infinite}
 @keyframes pulse{50%{opacity:.45}}
-.sidebar-logo img{max-height:42px;width:auto;object-fit:contain}
+.sidebar-logo img{width:42px;height:42px;object-fit:contain}
+.live-preview-frame{width:100%;height:620px;border:0;background:#fff;display:block}
 .empty{padding:40px 20px;text-align:center;color:#64748b}
 @media(max-width:1023px){
     .sidebar{transform:translateX(-100%);transition:.25s;z-index:50}
@@ -90,6 +91,7 @@ button{cursor:pointer}
     .content-pad{padding:16px!important}
     .topbar-title{font-size:16px}
     .hide-mobile{display:none}
+    .live-preview-frame{height:520px}
 }
 </style>
 </head>
@@ -99,13 +101,9 @@ button{cursor:pointer}
 <div id="mobile-overlay" class="mobile-overlay"></div>
 
 <aside id="sidebar" class="sidebar fixed left-0 top-0 bottom-0 bg-white border-r border-slate-200 flex flex-col">
-    <div class="h-20 px-5 flex items-center border-b border-slate-100 sidebar-logo">
-        <a href="/" target="_blank" class="flex items-center gap-3 min-w-0">
+    <div class="h-20 flex items-center justify-center border-b border-slate-100 sidebar-logo">
+        <a href="/" target="_blank" aria-label="ZWS" title="Zenama Web Services">
             <img src="https://zenamagroup.com/assets/zws-group.png" alt="ZWS">
-            <div class="min-w-0">
-                <div class="font-extrabold text-slate-900 text-lg leading-none">ZWS CMS</div>
-                <div class="text-[10px] text-slate-400 mt-1 font-medium">Zenama Web Services</div>
-            </div>
         </a>
     </div>
 
@@ -187,6 +185,11 @@ button{cursor:pointer}
             <button id="mobile-menu" class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 text-slate-600">
                 <i class="fa-solid fa-bars"></i>
             </button>
+
+            <div class="hidden lg:flex w-10 h-10 items-center justify-center shrink-0">
+                <img src="https://zenamagroup.com/assets/zws-group.png" alt="ZWS" title="Zenama Web Services" class="w-8 h-8 object-contain">
+            </div>
+
             <div class="min-w-0">
                 <div id="topbar-title" class="topbar-title font-bold text-slate-900 truncate">Dashboard</div>
                 <div id="topbar-subtitle" class="text-xs text-slate-400 truncate">Ringkasan CMS website Anda</div>
@@ -283,10 +286,15 @@ button{cursor:pointer}
                     <h2 class="font-bold text-slate-900">Struktur Beranda</h2>
                     <p class="text-xs text-slate-400 mt-1">Data halaman utama dari D1</p>
                 </div>
-                <button class="btn btn-secondary" data-page="sections"><i class="fa-solid fa-layer-group"></i> Kelola</button>
+                <button class="btn btn-secondary" data-page="sections">
+                    <i class="fa-solid fa-layer-group"></i> Kelola
+                </button>
             </div>
             <div id="dashboard-sections" class="p-5">
-                <div class="empty"><i class="fa-solid fa-spinner fa-spin text-xl mb-3"></i><p>Memuat data...</p></div>
+                <div class="empty">
+                    <i class="fa-solid fa-spinner fa-spin text-xl mb-3"></i>
+                    <p>Memuat data...</p>
+                </div>
             </div>
         </div>
 
@@ -321,10 +329,52 @@ button{cursor:pointer}
             <h2 class="font-bold text-slate-900">Informasi Website</h2>
         </div>
         <div id="dashboard-info" class="p-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div><div class="text-xs text-slate-400">Nama Website</div><div id="info-name" class="font-semibold text-slate-700 mt-1">—</div></div>
-            <div><div class="text-xs text-slate-400">Judul Website</div><div id="info-title" class="font-semibold text-slate-700 mt-1">—</div></div>
-            <div><div class="text-xs text-slate-400">Email</div><div id="info-email" class="font-semibold text-slate-700 mt-1 break-all">—</div></div>
-            <div><div class="text-xs text-slate-400">WhatsApp</div><div id="info-whatsapp" class="font-semibold text-slate-700 mt-1">—</div></div>
+            <div>
+                <div class="text-xs text-slate-400">Nama Website</div>
+                <div id="info-name" class="font-semibold text-slate-700 mt-1">—</div>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400">Judul Website</div>
+                <div id="info-title" class="font-semibold text-slate-700 mt-1">—</div>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400">Email</div>
+                <div id="info-email" class="font-semibold text-slate-700 mt-1 break-all">—</div>
+            </div>
+            <div>
+                <div class="text-xs text-slate-400">WhatsApp</div>
+                <div id="info-whatsapp" class="font-semibold text-slate-700 mt-1">—</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-5 overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <h2 class="font-bold text-slate-900">Live Preview Website</h2>
+                <p class="text-xs text-slate-400 mt-1">
+                    Pratinjau langsung halaman utama <code>index.html</code>.
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button id="refresh-preview-btn" class="btn btn-secondary">
+                    <i class="fa-solid fa-rotate"></i> Refresh Preview
+                </button>
+                <a href="/" target="_blank" class="btn btn-primary">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Website
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-slate-100 p-2 sm:p-3">
+            <div class="bg-white rounded-xl overflow-hidden border border-slate-200">
+                <iframe
+                    id="live-preview-frame"
+                    class="live-preview-frame"
+                    title="Live Preview Website"
+                    src="about:blank">
+                </iframe>
+            </div>
         </div>
     </div>
 </section>
@@ -336,14 +386,31 @@ button{cursor:pointer}
             <h1 class="text-2xl font-extrabold text-slate-900">Halaman</h1>
             <p class="text-sm text-slate-500 mt-1">Kelola halaman website dari database D1.</p>
         </div>
-        <button id="add-page-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Halaman</button>
+        <button id="add-page-btn" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Tambah Halaman
+        </button>
     </div>
 
     <div class="card">
         <div class="table-wrap">
             <table class="data-table">
-                <thead><tr><th>Halaman</th><th>Slug</th><th>Status</th><th>Template</th><th>Update</th><th>Aksi</th></tr></thead>
-                <tbody id="pages-table"><tr><td colspan="6"><div class="empty">Memuat data...</div></td></tr></tbody>
+                <thead>
+                    <tr>
+                        <th>Halaman</th>
+                        <th>Slug</th>
+                        <th>Status</th>
+                        <th>Template</th>
+                        <th>Update</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="pages-table">
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty">Memuat data...</div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -356,7 +423,9 @@ button{cursor:pointer}
             <h1 class="text-2xl font-extrabold text-slate-900">Section</h1>
             <p class="text-sm text-slate-500 mt-1">Kelola struktur dan konten section halaman.</p>
         </div>
-        <button id="add-section-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Section</button>
+        <button id="add-section-btn" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Tambah Section
+        </button>
     </div>
 
     <div class="card mb-5 p-5">
@@ -369,8 +438,23 @@ button{cursor:pointer}
     <div class="card">
         <div class="table-wrap">
             <table class="data-table">
-                <thead><tr><th>Section</th><th>Key</th><th>Tipe</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
-                <tbody id="sections-table"><tr><td colspan="6"><div class="empty">Pilih halaman.</div></td></tr></tbody>
+                <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th>Key</th>
+                        <th>Tipe</th>
+                        <th>Urutan</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="sections-table">
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty">Pilih halaman.</div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -383,14 +467,31 @@ button{cursor:pointer}
             <h1 class="text-2xl font-extrabold text-slate-900">Navigasi</h1>
             <p class="text-sm text-slate-500 mt-1">Kelola menu navigasi website.</p>
         </div>
-        <button id="add-navigation-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Menu</button>
+        <button id="add-navigation-btn" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Tambah Menu
+        </button>
     </div>
 
     <div class="card">
         <div class="table-wrap">
             <table class="data-table">
-                <thead><tr><th>Label</th><th>URL</th><th>Target</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
-                <tbody id="navigation-table"><tr><td colspan="6"><div class="empty">Memuat data...</div></td></tr></tbody>
+                <thead>
+                    <tr>
+                        <th>Label</th>
+                        <th>URL</th>
+                        <th>Target</th>
+                        <th>Urutan</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="navigation-table">
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty">Memuat data...</div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -406,8 +507,23 @@ button{cursor:pointer}
     <div class="card">
         <div class="table-wrap">
             <table class="data-table">
-                <thead><tr><th>Nama</th><th>URL</th><th>Folder</th><th>Tipe</th><th>Ukuran</th><th>Aksi</th></tr></thead>
-                <tbody id="media-table"><tr><td colspan="6"><div class="empty">Memuat data...</div></td></tr></tbody>
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>URL</th>
+                        <th>Folder</th>
+                        <th>Tipe</th>
+                        <th>Ukuran</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="media-table">
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty">Memuat data...</div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -422,22 +538,64 @@ button{cursor:pointer}
 
     <form id="settings-form" class="card p-5 sm:p-6">
         <div class="grid md:grid-cols-2 gap-5">
-            <div><label class="label">Nama Website</label><input id="settings-site-name" class="input" name="site_name"></div>
-            <div><label class="label">Judul Website</label><input id="settings-site-title" class="input" name="site_title"></div>
-            <div><label class="label">Tagline</label><input id="settings-tagline" class="input" name="tagline"></div>
-            <div><label class="label">Logo URL</label><input id="settings-logo" class="input" name="logo_url"></div>
-            <div><label class="label">Favicon URL</label><input id="settings-favicon" class="input" name="favicon_url"></div>
-            <div><label class="label">Email</label><input id="settings-email" class="input" name="contact_email"></div>
-            <div><label class="label">Telepon</label><input id="settings-phone" class="input" name="contact_phone"></div>
-            <div><label class="label">WhatsApp</label><input id="settings-whatsapp" class="input" name="whatsapp"></div>
-            <div><label class="label">Warna Utama</label><input id="settings-primary" class="input" name="primary_color" value="#1463d6"></div>
-            <div><label class="label">Warna Sekunder</label><input id="settings-secondary" class="input" name="secondary_color" value="#ffffff"></div>
-            <div class="md:col-span-2"><label class="label">Deskripsi</label><textarea id="settings-description" class="input min-h-[110px]" name="description"></textarea></div>
-            <div class="md:col-span-2"><label class="label">Alamat</label><textarea id="settings-address" class="input min-h-[90px]" name="address"></textarea></div>
-            <div class="md:col-span-2"><label class="label">Copyright</label><input id="settings-copyright" class="input" name="copyright_text"></div>
+            <div>
+                <label class="label">Nama Website</label>
+                <input id="settings-site-name" class="input" name="site_name">
+            </div>
+            <div>
+                <label class="label">Judul Website</label>
+                <input id="settings-site-title" class="input" name="site_title">
+            </div>
+            <div>
+                <label class="label">Tagline</label>
+                <input id="settings-tagline" class="input" name="tagline">
+            </div>
+            <div>
+                <label class="label">Logo URL</label>
+                <input id="settings-logo" class="input" name="logo_url">
+            </div>
+            <div>
+                <label class="label">Favicon URL</label>
+                <input id="settings-favicon" class="input" name="favicon_url">
+            </div>
+            <div>
+                <label class="label">Email</label>
+                <input id="settings-email" class="input" name="contact_email">
+            </div>
+            <div>
+                <label class="label">Telepon</label>
+                <input id="settings-phone" class="input" name="contact_phone">
+            </div>
+            <div>
+                <label class="label">WhatsApp</label>
+                <input id="settings-whatsapp" class="input" name="whatsapp">
+            </div>
+            <div>
+                <label class="label">Warna Utama</label>
+                <input id="settings-primary" class="input" name="primary_color" value="#1463d6">
+            </div>
+            <div>
+                <label class="label">Warna Sekunder</label>
+                <input id="settings-secondary" class="input" name="secondary_color" value="#ffffff">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Deskripsi</label>
+                <textarea id="settings-description" class="input min-h-[110px]" name="description"></textarea>
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Alamat</label>
+                <textarea id="settings-address" class="input min-h-[90px]" name="address"></textarea>
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Copyright</label>
+                <input id="settings-copyright" class="input" name="copyright_text">
+            </div>
         </div>
+
         <div class="mt-6 flex justify-end">
-            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button>
+            <button class="btn btn-primary" type="submit">
+                <i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan
+            </button>
         </div>
     </form>
 </section>
@@ -451,17 +609,44 @@ button{cursor:pointer}
 
     <form id="seo-form" class="card p-5 sm:p-6">
         <div class="grid md:grid-cols-2 gap-5">
-            <div class="md:col-span-2"><label class="label">Meta Title</label><input id="seo-title" class="input"></div>
-            <div class="md:col-span-2"><label class="label">Meta Description</label><textarea id="seo-description" class="input min-h-[110px]"></textarea></div>
-            <div class="md:col-span-2"><label class="label">Keywords</label><input id="seo-keywords" class="input"></div>
-            <div><label class="label">Canonical URL</label><input id="seo-canonical" class="input"></div>
-            <div><label class="label">Robots</label><input id="seo-robots" class="input" value="index,follow"></div>
-            <div><label class="label">OG Title</label><input id="seo-og-title" class="input"></div>
-            <div><label class="label">OG Image</label><input id="seo-og-image" class="input"></div>
-            <div class="md:col-span-2"><label class="label">OG Description</label><textarea id="seo-og-description" class="input min-h-[100px]"></textarea></div>
+            <div class="md:col-span-2">
+                <label class="label">Meta Title</label>
+                <input id="seo-title" class="input">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Meta Description</label>
+                <textarea id="seo-description" class="input min-h-[110px]"></textarea>
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Keywords</label>
+                <input id="seo-keywords" class="input">
+            </div>
+            <div>
+                <label class="label">Canonical URL</label>
+                <input id="seo-canonical" class="input">
+            </div>
+            <div>
+                <label class="label">Robots</label>
+                <input id="seo-robots" class="input" value="index,follow">
+            </div>
+            <div>
+                <label class="label">OG Title</label>
+                <input id="seo-og-title" class="input">
+            </div>
+            <div>
+                <label class="label">OG Image</label>
+                <input id="seo-og-image" class="input">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">OG Description</label>
+                <textarea id="seo-og-description" class="input min-h-[100px]"></textarea>
+            </div>
         </div>
+
         <div class="mt-6 flex justify-end">
-            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan SEO</button>
+            <button class="btn btn-primary" type="submit">
+                <i class="fa-solid fa-floppy-disk"></i> Simpan SEO
+            </button>
         </div>
     </form>
 </section>
@@ -475,16 +660,40 @@ button{cursor:pointer}
 
     <form id="contact-form" class="card p-5 sm:p-6">
         <div class="grid md:grid-cols-2 gap-5">
-            <div><label class="label">Email</label><input id="contact-email" class="input"></div>
-            <div><label class="label">WhatsApp</label><input id="contact-whatsapp" class="input"></div>
-            <div><label class="label">Telepon</label><input id="contact-phone" class="input"></div>
-            <div><label class="label">Instagram</label><input id="contact-instagram" class="input"></div>
-            <div><label class="label">Facebook</label><input id="contact-facebook" class="input"></div>
-            <div><label class="label">LinkedIn</label><input id="contact-linkedin" class="input"></div>
-            <div class="md:col-span-2"><label class="label">Website</label><input id="contact-website" class="input"></div>
+            <div>
+                <label class="label">Email</label>
+                <input id="contact-email" class="input">
+            </div>
+            <div>
+                <label class="label">WhatsApp</label>
+                <input id="contact-whatsapp" class="input">
+            </div>
+            <div>
+                <label class="label">Telepon</label>
+                <input id="contact-phone" class="input">
+            </div>
+            <div>
+                <label class="label">Instagram</label>
+                <input id="contact-instagram" class="input">
+            </div>
+            <div>
+                <label class="label">Facebook</label>
+                <input id="contact-facebook" class="input">
+            </div>
+            <div>
+                <label class="label">LinkedIn</label>
+                <input id="contact-linkedin" class="input">
+            </div>
+            <div class="md:col-span-2">
+                <label class="label">Website</label>
+                <input id="contact-website" class="input">
+            </div>
         </div>
+
         <div class="mt-6 flex justify-end">
-            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan Kontak</button>
+            <button class="btn btn-primary" type="submit">
+                <i class="fa-solid fa-floppy-disk"></i> Simpan Kontak
+            </button>
         </div>
     </form>
 </section>
@@ -499,15 +708,32 @@ button{cursor:pointer}
     <div class="card">
         <div class="table-wrap">
             <table class="data-table">
-                <thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Status</th><th>Dibuat</th><th>Update</th></tr></thead>
-                <tbody id="users-table"><tr><td colspan="6"><div class="empty">Memuat data...</div></td></tr></tbody>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Dibuat</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table">
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty">Memuat data...</div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
 
     <div class="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800">
         <i class="fa-solid fa-circle-info mr-1"></i>
-        Login ZWS tetap menggunakan Cloudflare Secrets <strong>ADMIN_USERNAME</strong> dan <strong>ADMIN_PASSWORD</strong>. Modul ini hanya membaca data tabel <strong>admin_users</strong>.
+        Login ZWS tetap menggunakan Cloudflare Secrets
+        <strong>ADMIN_USERNAME</strong> dan <strong>ADMIN_PASSWORD</strong>.
+        Modul ini hanya membaca data tabel <strong>admin_users</strong>.
     </div>
 </section>
 
@@ -524,7 +750,8 @@ button{cursor:pointer}
         </div>
         <h2 class="font-bold text-slate-800">Riwayat revisi belum tersedia</h2>
         <p class="text-sm text-slate-500 mt-2 max-w-md mx-auto">
-            API <code>/api/cms.js</code> saat ini belum memiliki action untuk membaca atau menyimpan tabel <code>revisions</code>.
+            API <code>/api/cms.js</code> saat ini belum memiliki action untuk membaca atau menyimpan tabel
+            <code>revisions</code>.
         </p>
     </div>
 </section>
@@ -540,15 +767,20 @@ button{cursor:pointer}
                 <h3 id="modal-title" class="font-bold text-slate-900">Form</h3>
                 <p id="modal-subtitle" class="text-xs text-slate-400 mt-1"></p>
             </div>
+
             <button id="modal-close" class="w-9 h-9 rounded-lg hover:bg-slate-100 text-slate-500">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
+
         <form id="modal-form">
             <div id="modal-body" class="p-5 overflow-y-auto max-h-[65vh]"></div>
+
             <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2">
                 <button type="button" id="modal-cancel" class="btn btn-secondary">Batal</button>
-                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan
+                </button>
             </div>
         </form>
     </div>
@@ -557,7 +789,10 @@ button{cursor:pointer}
 <!-- TOAST -->
 <div id="toast" class="toast fixed right-4 bottom-4 z-[100] max-w-sm">
     <div class="bg-slate-900 text-white rounded-xl shadow-xl px-4 py-3 flex items-start gap-3">
-        <div id="toast-icon" class="mt-0.5"><i class="fa-solid fa-circle-check"></i></div>
+        <div id="toast-icon" class="mt-0.5">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+
         <div>
             <div id="toast-title" class="font-semibold text-sm">Berhasil</div>
             <div id="toast-message" class="text-xs text-slate-300 mt-0.5"></div>
@@ -599,8 +834,11 @@ function escapeHtml(value){
 
 function formatDate(value){
     if(!value)return"—";
+
     const date=new Date(String(value).replace(" ","T"));
+
     if(Number.isNaN(date.getTime()))return value;
+
     return date.toLocaleDateString("id-ID",{
         day:"2-digit",
         month:"short",
@@ -610,12 +848,15 @@ function formatDate(value){
 
 function statusBadge(value){
     const v=String(value??"").toLowerCase();
+
     if(v==="published"||v==="active"||v==="1"||v==="true"){
         return'<span class="badge badge-green">Aktif</span>';
     }
+
     if(v==="draft"){
         return'<span class="badge badge-yellow">Draft</span>';
     }
+
     return`<span class="badge badge-gray">${escapeHtml(value||"Tidak aktif")}</span>`;
 }
 
@@ -627,7 +868,9 @@ function visibleBadge(value){
 
 function setSystemStatus(id,ok,textOk="Terhubung",textFail="Gagal"){
     const el=$(id);
+
     if(!el)return;
+
     el.className=`badge ${ok?"badge-green":"badge-yellow"}`;
     el.textContent=ok?textOk:textFail;
 }
@@ -637,14 +880,22 @@ function showToast(message,type="success"){
     const title=$("toast-title");
     const msg=$("toast-message");
     const icon=$("toast-icon");
+
     title.textContent=type==="error"?"Gagal":"Berhasil";
     msg.textContent=message;
+
     icon.innerHTML=type==="error"
         ?'<i class="fa-solid fa-circle-exclamation text-red-400"></i>'
         :'<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+
     toast.classList.add("show");
+
     clearTimeout(window.__toastTimer);
-    window.__toastTimer=setTimeout(()=>toast.classList.remove("show"),3500);
+
+    window.__toastTimer=setTimeout(
+        ()=>toast.classList.remove("show"),
+        3500
+    );
 }
 
 async function apiFetch(action,options={}){
@@ -675,14 +926,21 @@ async function apiFetch(action,options={}){
     const response=await fetch(url,config);
 
     let data=null;
+
     try{
         data=await response.json();
     }catch{
-        throw new Error(`Server mengembalikan response tidak valid (${response.status}).`);
+        throw new Error(
+            `Server mengembalikan response tidak valid (${response.status}).`
+        );
     }
 
     if(!response.ok||data?.success===false){
-        throw new Error(data?.error||data?.message||`Request gagal (${response.status}).`);
+        throw new Error(
+            data?.error||
+            data?.message||
+            `Request gagal (${response.status}).`
+        );
     }
 
     return data;
@@ -700,7 +958,9 @@ async function checkSession(){
         const data=await response.json();
 
         if(!data?.authenticated){
-            window.location.replace("/autentikasi-zws-panel/login");
+            window.location.replace(
+                "/autentikasi-zws-panel/login"
+            );
             return false;
         }
 
@@ -711,7 +971,11 @@ async function checkSession(){
         return true;
     }catch(error){
         console.error(error);
-        window.location.replace("/autentikasi-zws-panel/login");
+
+        window.location.replace(
+            "/autentikasi-zws-panel/login"
+        );
+
         return false;
     }
 }
@@ -726,34 +990,87 @@ async function logout(){
     }catch(error){
         console.warn(error);
     }
-    window.location.replace("/autentikasi-zws-panel/login");
+
+    window.location.replace(
+        "/autentikasi-zws-panel/login"
+    );
+}
+
+function refreshLivePreview(){
+    const frame=$("live-preview-frame");
+
+    if(!frame)return;
+
+    const url=new URL(SITE,location.origin);
+
+    url.searchParams.set("zws_preview","1");
+    url.searchParams.set("_",Date.now());
+
+    frame.src=url.toString();
 }
 
 function setView(view){
     state.currentView=view;
 
     document.querySelectorAll(".page-view").forEach(el=>{
-        el.classList.toggle("active",el.id===`view-${view}`);
+        el.classList.toggle(
+            "active",
+            el.id===`view-${view}`
+        );
     });
 
     document.querySelectorAll(".nav-item[data-page]").forEach(el=>{
-        el.classList.toggle("active",el.dataset.page===view);
+        el.classList.toggle(
+            "active",
+            el.dataset.page===view
+        );
     });
 
     const titles={
-        dashboard:["Dashboard","Ringkasan CMS website Anda"],
-        pages:["Halaman","Kelola halaman website"],
-        sections:["Section","Kelola struktur konten halaman"],
-        navigation:["Navigasi","Kelola menu website"],
-        media:["Media","Kelola media website"],
-        settings:["Pengaturan Website","Konfigurasi informasi utama website"],
-        seo:["SEO","Pengaturan optimasi mesin pencari"],
-        contact:["Kontak","Informasi kontak dan sosial media"],
-        users:["Pengguna","Pengguna administrator"],
-        revisions:["Revisi","Riwayat perubahan konten"]
+        dashboard:[
+            "Dashboard",
+            "Ringkasan CMS website Anda"
+        ],
+        pages:[
+            "Halaman",
+            "Kelola halaman website"
+        ],
+        sections:[
+            "Section",
+            "Kelola struktur konten halaman"
+        ],
+        navigation:[
+            "Navigasi",
+            "Kelola menu website"
+        ],
+        media:[
+            "Media",
+            "Kelola media website"
+        ],
+        settings:[
+            "Pengaturan Website",
+            "Konfigurasi informasi utama website"
+        ],
+        seo:[
+            "SEO",
+            "Pengaturan optimasi mesin pencari"
+        ],
+        contact:[
+            "Kontak",
+            "Informasi kontak dan sosial media"
+        ],
+        users:[
+            "Pengguna",
+            "Pengguna administrator"
+        ],
+        revisions:[
+            "Revisi",
+            "Riwayat perubahan konten"
+        ]
     };
 
     const title=titles[view]||titles.dashboard;
+
     $("topbar-title").textContent=title[0];
     $("topbar-subtitle").textContent=title[1];
 
@@ -765,20 +1082,36 @@ function setView(view){
 async function loadView(view){
     try{
         if(view==="dashboard")await loadDashboard();
+
         if(view==="pages")await loadPages();
+
         if(view==="sections"){
             await loadPagesForSelect();
-            if(state.currentPage)await loadSections(state.currentPage);
+
+            if(state.currentPage){
+                await loadSections(state.currentPage);
+            }
         }
+
         if(view==="navigation")await loadNavigation();
+
         if(view==="media")await loadMedia();
+
         if(view==="settings")await loadSettings();
+
         if(view==="seo")await loadSeo();
+
         if(view==="contact")await loadContact();
+
         if(view==="users")await loadUsers();
+
     }catch(error){
         console.error(error);
-        showToast(error.message||"Gagal memuat data.","error");
+
+        showToast(
+            error.message||"Gagal memuat data.",
+            "error"
+        );
     }
 }
 
@@ -786,14 +1119,25 @@ async function loadView(view){
 
 async function loadDashboard(){
     const errorBox=$("dashboard-error");
+
     errorBox.classList.add("hidden");
 
     try{
-        setSystemStatus("status-api",true,"Online");
+        setSystemStatus(
+            "status-api",
+            true,
+            "Online"
+        );
+
         const result=await apiFetch("home");
         const data=result.data||{};
 
-        setSystemStatus("status-db",true,"Terhubung","Gagal");
+        setSystemStatus(
+            "status-db",
+            true,
+            "Terhubung",
+            "Gagal"
+        );
 
         const pages=await apiFetch("pages");
         const navigation=await apiFetch("navigation");
@@ -804,12 +1148,20 @@ async function loadDashboard(){
         state.media=media.data||[];
 
         let sectionCount=0;
+
         if(data.page?.id){
             try{
-                const sections=await apiFetch("sections",{
-                    params:{page_id:data.page.id}
-                });
+                const sections=await apiFetch(
+                    "sections",
+                    {
+                        params:{
+                            page_id:data.page.id
+                        }
+                    }
+                );
+
                 sectionCount=(sections.data||[]).length;
+
             }catch{}
         }
 
@@ -819,26 +1171,53 @@ async function loadDashboard(){
         $("stat-media").textContent=state.media.length;
 
         const settings=data.settings||{};
-        $("info-name").textContent=settings.site_name||"—";
-        $("info-title").textContent=settings.site_title||"—";
-        $("info-email").textContent=settings.contact_email||"—";
-        $("info-whatsapp").textContent=settings.whatsapp||"—";
+
+        $("info-name").textContent=
+            settings.site_name||"—";
+
+        $("info-title").textContent=
+            settings.site_title||"—";
+
+        $("info-email").textContent=
+            settings.contact_email||"—";
+
+        $("info-whatsapp").textContent=
+            settings.whatsapp||"—";
 
         const sectionBox=$("dashboard-sections");
 
         if(data.sections?.length){
-            sectionBox.innerHTML=data.sections.map((section,index)=>`
+            sectionBox.innerHTML=data.sections.map(
+                (section,index)=>`
                 <div class="flex items-center gap-3 py-3 ${index?"border-t border-slate-100":""}">
                     <div class="w-9 h-9 rounded-lg bg-blue-50 text-zws-600 flex items-center justify-center shrink-0">
                         <i class="fa-solid fa-layer-group text-xs"></i>
                     </div>
+
                     <div class="min-w-0 flex-1">
-                        <div class="font-semibold text-sm text-slate-800 truncate">${escapeHtml(section.title||section.section_key||"Section")}</div>
-                        <div class="text-xs text-slate-400 mt-0.5">${escapeHtml(section.section_type||"content")} · ${section.items?.length||0} item</div>
+                        <div class="font-semibold text-sm text-slate-800 truncate">
+                            ${escapeHtml(
+                                section.title||
+                                section.section_key||
+                                "Section"
+                            )}
+                        </div>
+
+                        <div class="text-xs text-slate-400 mt-0.5">
+                            ${escapeHtml(
+                                section.section_type||
+                                "content"
+                            )}
+                            ·
+                            ${section.items?.length||0}
+                            item
+                        </div>
                     </div>
+
                     ${visibleBadge(section.is_visible)}
                 </div>
-            `).join("");
+            `
+            ).join("");
         }else{
             sectionBox.innerHTML=`
                 <div class="empty">
@@ -848,12 +1227,34 @@ async function loadDashboard(){
             `;
         }
 
-        setSystemStatus("status-media",true,"D1 aktif");
+        setSystemStatus(
+            "status-media",
+            true,
+            "D1 aktif"
+        );
+
+        refreshLivePreview();
+
     }catch(error){
-        setSystemStatus("status-api",false,"Online","Error");
-        setSystemStatus("status-db",false,"Terhubung","Tidak terhubung");
-        errorBox.textContent=`D1 / API: ${error.message}`;
+        setSystemStatus(
+            "status-api",
+            false,
+            "Online",
+            "Error"
+        );
+
+        setSystemStatus(
+            "status-db",
+            false,
+            "Terhubung",
+            "Tidak terhubung"
+        );
+
+        errorBox.textContent=
+            `D1 / API: ${error.message}`;
+
         errorBox.classList.remove("hidden");
+
         throw error;
     }
 }
@@ -862,30 +1263,89 @@ async function loadDashboard(){
 
 async function loadPages(){
     const tbody=$("pages-table");
-    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat data...</div></div></td></tr>';
+
+    tbody.innerHTML=`
+        <tr>
+            <td colspan="6">
+                <div class="empty">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <div class="mt-2">Memuat data...</div>
+                </div>
+            </td>
+        </tr>
+    `;
 
     const result=await apiFetch("pages");
+
     state.pages=result.data||[];
 
     if(!state.pages.length){
-        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada halaman.</div></td></tr>';
+        tbody.innerHTML=`
+            <tr>
+                <td colspan="6">
+                    <div class="empty">
+                        Belum ada halaman.
+                    </div>
+                </td>
+            </tr>
+        `;
+
         return;
     }
 
     tbody.innerHTML=state.pages.map(page=>`
         <tr>
             <td>
-                <div class="font-semibold text-slate-800">${escapeHtml(page.title||"Tanpa judul")}</div>
-                <div class="text-xs text-slate-400 mt-1">ID ${escapeHtml(page.id)}</div>
+                <div class="font-semibold text-slate-800">
+                    ${escapeHtml(
+                        page.title||
+                        "Tanpa judul"
+                    )}
+                </div>
+
+                <div class="text-xs text-slate-400 mt-1">
+                    ID ${escapeHtml(page.id)}
+                </div>
             </td>
-            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">${escapeHtml(page.slug||"—")}</code></td>
-            <td>${statusBadge(page.status)}</td>
-            <td><span class="text-sm text-slate-600">${escapeHtml(page.template||"—")}</span></td>
-            <td class="text-xs text-slate-500">${formatDate(page.updated_at||page.created_at)}</td>
+
+            <td>
+                <code class="text-xs bg-slate-100 px-2 py-1 rounded">
+                    ${escapeHtml(page.slug||"—")}
+                </code>
+            </td>
+
+            <td>
+                ${statusBadge(page.status)}
+            </td>
+
+            <td>
+                <span class="text-sm text-slate-600">
+                    ${escapeHtml(page.template||"—")}
+                </span>
+            </td>
+
+            <td class="text-xs text-slate-500">
+                ${formatDate(
+                    page.updated_at||
+                    page.created_at
+                )}
+            </td>
+
             <td>
                 <div class="flex gap-1.5">
-                    <button class="btn btn-secondary !p-2" title="Edit" onclick="window.ZWSCMS.editPage(${Number(page.id)})"><i class="fa-solid fa-pen text-xs"></i></button>
-                    <button class="btn btn-danger !p-2" title="Hapus" onclick="window.ZWSCMS.deletePage(${Number(page.id)})"><i class="fa-solid fa-trash text-xs"></i></button>
+                    <button
+                        class="btn btn-secondary !p-2"
+                        title="Edit"
+                        onclick="window.ZWSCMS.editPage(${Number(page.id)})">
+                        <i class="fa-solid fa-pen text-xs"></i>
+                    </button>
+
+                    <button
+                        class="btn btn-danger !p-2"
+                        title="Hapus"
+                        onclick="window.ZWSCMS.deletePage(${Number(page.id)})">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
                 </div>
             </td>
         </tr>
@@ -894,23 +1354,49 @@ async function loadPages(){
 
 async function loadPagesForSelect(){
     const select=$("section-page-select");
+
     const result=await apiFetch("pages");
+
     state.pages=result.data||[];
 
     if(!state.pages.length){
-        select.innerHTML='<option value="">Belum ada halaman</option>';
+        select.innerHTML=
+            '<option value="">Belum ada halaman</option>';
+
         return;
     }
 
     select.innerHTML=state.pages.map(page=>`
-        <option value="${escapeHtml(page.id)}">${escapeHtml(page.title||"Tanpa judul")} — ${escapeHtml(page.slug||"")}</option>
+        <option value="${escapeHtml(page.id)}">
+            ${escapeHtml(
+                page.title||
+                "Tanpa judul"
+            )}
+            —
+            ${escapeHtml(page.slug||"")}
+        </option>
     `).join("");
 
-    if(state.currentPage&&state.pages.some(p=>String(p.id)===String(state.currentPage))){
+    if(
+        state.currentPage&&
+        state.pages.some(
+            p=>String(p.id)===
+            String(state.currentPage)
+        )
+    ){
         select.value=state.currentPage;
     }else{
-        const home=state.pages.find(p=>p.slug==="/");
-        state.currentPage=String(home?.id||state.pages[0].id);
+        const home=
+            state.pages.find(
+                p=>p.slug==="/"
+            );
+
+        state.currentPage=
+            String(
+                home?.id||
+                state.pages[0].id
+            );
+
         select.value=state.currentPage;
     }
 }
@@ -919,56 +1405,179 @@ function openPageModal(page=null){
     state.modalType="page";
     state.modalId=page?.id||null;
 
-    $("modal-title").textContent=page?"Edit Halaman":"Tambah Halaman";
-    $("modal-subtitle").textContent=page?"Perbarui data halaman":"Buat halaman baru";
+    $("modal-title").textContent=
+        page?
+        "Edit Halaman":
+        "Tambah Halaman";
+
+    $("modal-subtitle").textContent=
+        page?
+        "Perbarui data halaman":
+        "Buat halaman baru";
+
     $("modal-body").innerHTML=`
         <div class="grid md:grid-cols-2 gap-4">
+
             <div class="md:col-span-2">
-                <label class="label">Judul Halaman *</label>
-                <input id="m-title" class="input" required value="${escapeHtml(page?.title||"")}">
+                <label class="label">
+                    Judul Halaman *
+                </label>
+
+                <input
+                    id="m-title"
+                    class="input"
+                    required
+                    value="${escapeHtml(
+                        page?.title||
+                        ""
+                    )}">
             </div>
+
             <div>
-                <label class="label">Slug *</label>
-                <input id="m-slug" class="input" required placeholder="/" value="${escapeHtml(page?.slug||"")}">
+                <label class="label">
+                    Slug *
+                </label>
+
+                <input
+                    id="m-slug"
+                    class="input"
+                    required
+                    placeholder="/"
+                    value="${escapeHtml(
+                        page?.slug||
+                        ""
+                    )}">
             </div>
+
             <div>
-                <label class="label">Status</label>
-                <select id="m-status" class="input">
-                    <option value="draft" ${page?.status==="draft"?"selected":""}>Draft</option>
-                    <option value="published" ${page?.status==="published"?"selected":""}>Published</option>
-                    <option value="scheduled" ${page?.status==="scheduled"?"selected":""}>Scheduled</option>
+                <label class="label">
+                    Status
+                </label>
+
+                <select
+                    id="m-status"
+                    class="input">
+
+                    <option
+                        value="draft"
+                        ${page?.status==="draft"?"selected":""}>
+                        Draft
+                    </option>
+
+                    <option
+                        value="published"
+                        ${page?.status==="published"?"selected":""}>
+                        Published
+                    </option>
+
+                    <option
+                        value="scheduled"
+                        ${page?.status==="scheduled"?"selected":""}>
+                        Scheduled
+                    </option>
+
                 </select>
             </div>
+
             <div>
-                <label class="label">Template</label>
-                <input id="m-template" class="input" value="${escapeHtml(page?.template||"landing")}">
+                <label class="label">
+                    Template
+                </label>
+
+                <input
+                    id="m-template"
+                    class="input"
+                    value="${escapeHtml(
+                        page?.template||
+                        "landing"
+                    )}">
             </div>
+
             <div>
-                <label class="label">Canonical URL</label>
-                <input id="m-canonical" class="input" value="${escapeHtml(page?.canonical_url||"")}">
+                <label class="label">
+                    Canonical URL
+                </label>
+
+                <input
+                    id="m-canonical"
+                    class="input"
+                    value="${escapeHtml(
+                        page?.canonical_url||
+                        ""
+                    )}">
             </div>
+
             <div class="md:col-span-2">
-                <label class="label">Meta Title</label>
-                <input id="m-meta-title" class="input" value="${escapeHtml(page?.meta_title||"")}">
+                <label class="label">
+                    Meta Title
+                </label>
+
+                <input
+                    id="m-meta-title"
+                    class="input"
+                    value="${escapeHtml(
+                        page?.meta_title||
+                        ""
+                    )}">
             </div>
+
             <div class="md:col-span-2">
-                <label class="label">Meta Description</label>
-                <textarea id="m-meta-description" class="input min-h-[90px]">${escapeHtml(page?.meta_description||"")}</textarea>
+                <label class="label">
+                    Meta Description
+                </label>
+
+                <textarea
+                    id="m-meta-description"
+                    class="input min-h-[90px]">${escapeHtml(
+                        page?.meta_description||
+                        ""
+                    )}</textarea>
             </div>
+
             <div>
-                <label class="label">OG Title</label>
-                <input id="m-og-title" class="input" value="${escapeHtml(page?.og_title||"")}">
+                <label class="label">
+                    OG Title
+                </label>
+
+                <input
+                    id="m-og-title"
+                    class="input"
+                    value="${escapeHtml(
+                        page?.og_title||
+                        ""
+                    )}">
             </div>
+
             <div>
-                <label class="label">OG Image</label>
-                <input id="m-og-image" class="input" value="${escapeHtml(page?.og_image||"")}">
+                <label class="label">
+                    OG Image
+                </label>
+
+                <input
+                    id="m-og-image"
+                    class="input"
+                    value="${escapeHtml(
+                        page?.og_image||
+                        ""
+                    )}">
             </div>
+
             <div class="md:col-span-2">
-                <label class="label">OG Description</label>
-                <textarea id="m-og-description" class="input min-h-[90px]">${escapeHtml(page?.og_description||"")}</textarea>
+                <label class="label">
+                    OG Description
+                </label>
+
+                <textarea
+                    id="m-og-description"
+                    class="input min-h-[90px]">${escapeHtml(
+                        page?.og_description||
+                        ""
+                    )}</textarea>
             </div>
+
         </div>
     `;
+
     $("modal").classList.add("show");
 }
 
@@ -977,7 +1586,8 @@ async function savePage(){
         title:$("m-title").value.trim(),
         slug:$("m-slug").value.trim(),
         status:$("m-status").value,
-        template:$("m-template").value.trim()||"landing",
+        template:$("m-template").value.trim()||
+            "landing",
         canonical_url:$("m-canonical").value.trim(),
         meta_title:$("m-meta-title").value.trim(),
         meta_description:$("m-meta-description").value.trim(),
@@ -987,74 +1597,193 @@ async function savePage(){
     };
 
     if(!body.title||!body.slug){
-        showToast("Judul dan slug wajib diisi.","error");
+        showToast(
+            "Judul dan slug wajib diisi.",
+            "error"
+        );
+
         return;
     }
 
-    const method=state.modalId?"PUT":"POST";
+    const method=
+        state.modalId?
+        "PUT":
+        "POST";
 
-    if(state.modalId)body.id=state.modalId;
+    if(state.modalId){
+        body.id=state.modalId;
+    }
 
-    await apiFetch("page",{
-        method,
-        body:JSON.stringify(body)
-    });
+    await apiFetch(
+        "page",
+        {
+            method,
+            body:JSON.stringify(body)
+        }
+    );
+
+    const wasEdit=Boolean(state.modalId);
 
     closeModal();
-    showToast(state.modalId?"Halaman berhasil diperbarui.":"Halaman berhasil dibuat.");
+
+    showToast(
+        wasEdit?
+        "Halaman berhasil diperbarui.":
+        "Halaman berhasil dibuat."
+    );
+
     await loadPages();
+    refreshLivePreview();
 }
 
 async function deletePage(id){
-    const page=state.pages.find(item=>Number(item.id)===Number(id));
-    if(!confirm(`Hapus halaman "${page?.title||"ini"}"?`))return;
+    const page=
+        state.pages.find(
+            item=>Number(item.id)===
+            Number(id)
+        );
 
-    await apiFetch("page",{
-        method:"DELETE",
-        params:{id}
-    });
+    if(
+        !confirm(
+            `Hapus halaman "${
+                page?.title||
+                "ini"
+            }"?`
+        )
+    )return;
 
-    showToast("Halaman berhasil dihapus.");
+    await apiFetch(
+        "page",
+        {
+            method:"DELETE",
+            params:{id}
+        }
+    );
+
+    showToast(
+        "Halaman berhasil dihapus."
+    );
+
     await loadPages();
+    refreshLivePreview();
 }
 
 async function editPage(id){
-    const page=state.pages.find(item=>Number(item.id)===Number(id));
-    if(page)openPageModal(page);
+    const page=
+        state.pages.find(
+            item=>Number(item.id)===
+            Number(id)
+        );
+
+    if(page){
+        openPageModal(page);
+    }
 }
 
 /* SECTIONS */
 
 async function loadSections(pageId){
     const tbody=$("sections-table");
-    state.currentPage=String(pageId);
-    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat section...</div></div></td></tr>';
 
-    const result=await apiFetch("sections",{
-        params:{page_id:pageId}
-    });
+    state.currentPage=String(pageId);
+
+    tbody.innerHTML=`
+        <tr>
+            <td colspan="6">
+                <div class="empty">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <div class="mt-2">
+                        Memuat section...
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    const result=await apiFetch(
+        "sections",
+        {
+            params:{
+                page_id:pageId
+            }
+        }
+    );
 
     state.sections=result.data||[];
 
     if(!state.sections.length){
-        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada section pada halaman ini.</div></td></tr>';
+        tbody.innerHTML=`
+            <tr>
+                <td colspan="6">
+                    <div class="empty">
+                        Belum ada section pada halaman ini.
+                    </div>
+                </td>
+            </tr>
+        `;
+
         return;
     }
 
     tbody.innerHTML=state.sections.map(section=>`
         <tr>
             <td>
-                <div class="font-semibold text-slate-800">${escapeHtml(section.title||section.section_key||"Tanpa judul")}</div>
-                <div class="text-xs text-slate-400 mt-1">ID ${escapeHtml(section.id)}</div>
+                <div class="font-semibold text-slate-800">
+                    ${escapeHtml(
+                        section.title||
+                        section.section_key||
+                        "Tanpa judul"
+                    )}
+                </div>
+
+                <div class="text-xs text-slate-400 mt-1">
+                    ID ${escapeHtml(section.id)}
+                </div>
             </td>
-            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">${escapeHtml(section.section_key||"—")}</code></td>
-            <td>${escapeHtml(section.section_type||"content")}</td>
-            <td>${escapeHtml(section.sort_order??0)}</td>
-            <td>${visibleBadge(section.is_visible)}</td>
+
+            <td>
+                <code class="text-xs bg-slate-100 px-2 py-1 rounded">
+                    ${escapeHtml(
+                        section.section_key||
+                        "—"
+                    )}
+                </code>
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    section.section_type||
+                    "content"
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    section.sort_order??0
+                )}
+            </td>
+
+            <td>
+                ${visibleBadge(
+                    section.is_visible
+                )}
+            </td>
+
             <td>
                 <div class="flex gap-1.5">
-                    <button class="btn btn-secondary !p-2" onclick="window.ZWSCMS.editSection(${Number(section.id)})"><i class="fa-solid fa-pen text-xs"></i></button>
-                    <button class="btn btn-danger !p-2" onclick="window.ZWSCMS.deleteSection(${Number(section.id)})"><i class="fa-solid fa-trash text-xs"></i></button>
+
+                    <button
+                        class="btn btn-secondary !p-2"
+                        onclick="window.ZWSCMS.editSection(${Number(section.id)})">
+                        <i class="fa-solid fa-pen text-xs"></i>
+                    </button>
+
+                    <button
+                        class="btn btn-danger !p-2"
+                        onclick="window.ZWSCMS.deleteSection(${Number(section.id)})">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
+
                 </div>
             </td>
         </tr>
@@ -1065,132 +1794,365 @@ function openSectionModal(section=null){
     state.modalType="section";
     state.modalId=section?.id||null;
 
-    $("modal-title").textContent=section?"Edit Section":"Tambah Section";
-    $("modal-subtitle").textContent=section?"Perbarui section":"Tambahkan section ke halaman terpilih";
+    $("modal-title").textContent=
+        section?
+        "Edit Section":
+        "Tambah Section";
+
+    $("modal-subtitle").textContent=
+        section?
+        "Perbarui section":
+        "Tambahkan section ke halaman terpilih";
 
     $("modal-body").innerHTML=`
         <div class="grid md:grid-cols-2 gap-4">
+
             <div>
-                <label class="label">Section Key</label>
-                <input id="m-section-key" class="input" placeholder="hero" value="${escapeHtml(section?.section_key||"")}">
+                <label class="label">
+                    Section Key
+                </label>
+
+                <input
+                    id="m-section-key"
+                    class="input"
+                    placeholder="hero"
+                    value="${escapeHtml(
+                        section?.section_key||
+                        ""
+                    )}">
             </div>
+
             <div>
-                <label class="label">Tipe Section</label>
-                <input id="m-section-type" class="input" placeholder="hero / content / cards" value="${escapeHtml(section?.section_type||"content")}">
+                <label class="label">
+                    Tipe Section
+                </label>
+
+                <input
+                    id="m-section-type"
+                    class="input"
+                    placeholder="hero / content / cards"
+                    value="${escapeHtml(
+                        section?.section_type||
+                        "content"
+                    )}">
             </div>
+
             <div class="md:col-span-2">
-                <label class="label">Judul</label>
-                <input id="m-section-title" class="input" value="${escapeHtml(section?.title||"")}">
+                <label class="label">
+                    Judul
+                </label>
+
+                <input
+                    id="m-section-title"
+                    class="input"
+                    value="${escapeHtml(
+                        section?.title||
+                        ""
+                    )}">
             </div>
+
             <div class="md:col-span-2">
-                <label class="label">Subtitle</label>
-                <input id="m-section-subtitle" class="input" value="${escapeHtml(section?.subtitle||"")}">
+                <label class="label">
+                    Subtitle
+                </label>
+
+                <input
+                    id="m-section-subtitle"
+                    class="input"
+                    value="${escapeHtml(
+                        section?.subtitle||
+                        ""
+                    )}">
             </div>
+
             <div class="md:col-span-2">
-                <label class="label">Content / HTML</label>
-                <textarea id="m-section-content" class="input min-h-[160px]">${escapeHtml(section?.content||"")}</textarea>
+                <label class="label">
+                    Content / HTML
+                </label>
+
+                <textarea
+                    id="m-section-content"
+                    class="input min-h-[160px]">${escapeHtml(
+                        section?.content||
+                        ""
+                    )}</textarea>
             </div>
+
             <div>
-                <label class="label">Urutan</label>
-                <input id="m-section-order" type="number" class="input" value="${escapeHtml(section?.sort_order??0)}">
+                <label class="label">
+                    Urutan
+                </label>
+
+                <input
+                    id="m-section-order"
+                    type="number"
+                    class="input"
+                    value="${escapeHtml(
+                        section?.sort_order??0
+                    )}">
             </div>
+
             <div>
-                <label class="label">Tampilan</label>
-                <select id="m-section-visible" class="input">
-                    <option value="1" ${Number(section?.is_visible??1)===1?"selected":""}>Tampilkan</option>
-                    <option value="0" ${Number(section?.is_visible)===0?"selected":""}>Sembunyikan</option>
+                <label class="label">
+                    Tampilan
+                </label>
+
+                <select
+                    id="m-section-visible"
+                    class="input">
+
+                    <option
+                        value="1"
+                        ${Number(section?.is_visible??1)===1?"selected":""}>
+                        Tampilkan
+                    </option>
+
+                    <option
+                        value="0"
+                        ${Number(section?.is_visible)===0?"selected":""}>
+                        Sembunyikan
+                    </option>
+
                 </select>
             </div>
+
             <div class="md:col-span-2">
-                <label class="label">Settings JSON</label>
-                <textarea id="m-section-settings" class="input min-h-[100px] font-mono text-xs">${escapeHtml(section?.settings_json||"{}")}</textarea>
+                <label class="label">
+                    Settings JSON
+                </label>
+
+                <textarea
+                    id="m-section-settings"
+                    class="input min-h-[100px] font-mono text-xs">${escapeHtml(
+                        section?.settings_json||
+                        "{}"
+                    )}</textarea>
             </div>
+
         </div>
     `;
+
     $("modal").classList.add("show");
 }
 
 async function saveSection(){
     const body={
-        page_id:Number(state.currentPage),
+        page_id:Number(
+            state.currentPage
+        ),
         section_key:$("m-section-key").value.trim(),
-        section_type:$("m-section-type").value.trim()||"content",
+        section_type:$("m-section-type").value.trim()||
+            "content",
         title:$("m-section-title").value.trim(),
         subtitle:$("m-section-subtitle").value.trim(),
         content:$("m-section-content").value,
-        settings_json:$("m-section-settings").value.trim()||"{}",
-        sort_order:Number($("m-section-order").value||0),
-        is_visible:Number($("m-section-visible").value)
+        settings_json:$("m-section-settings").value.trim()||
+            "{}",
+        sort_order:Number(
+            $("m-section-order").value||0
+        ),
+        is_visible:Number(
+            $("m-section-visible").value
+        )
     };
 
     if(!body.page_id){
-        showToast("Pilih halaman terlebih dahulu.","error");
+        showToast(
+            "Pilih halaman terlebih dahulu.",
+            "error"
+        );
+
         return;
     }
 
     try{
-        JSON.parse(body.settings_json);
+        JSON.parse(
+            body.settings_json
+        );
     }catch{
-        showToast("Settings JSON tidak valid.","error");
+        showToast(
+            "Settings JSON tidak valid.",
+            "error"
+        );
+
         return;
     }
 
-    const method=state.modalId?"PUT":"POST";
-    if(state.modalId)body.id=state.modalId;
+    const method=
+        state.modalId?
+        "PUT":
+        "POST";
 
-    await apiFetch("section",{
-        method,
-        body:JSON.stringify(body)
-    });
+    if(state.modalId){
+        body.id=state.modalId;
+    }
+
+    await apiFetch(
+        "section",
+        {
+            method,
+            body:JSON.stringify(body)
+        }
+    );
+
+    const wasEdit=Boolean(state.modalId);
 
     closeModal();
-    showToast(state.modalId?"Section berhasil diperbarui.":"Section berhasil dibuat.");
-    await loadSections(state.currentPage);
+
+    showToast(
+        wasEdit?
+        "Section berhasil diperbarui.":
+        "Section berhasil dibuat."
+    );
+
+    await loadSections(
+        state.currentPage
+    );
+
+    refreshLivePreview();
 }
 
 async function editSection(id){
-    const section=state.sections.find(item=>Number(item.id)===Number(id));
-    if(section)openSectionModal(section);
+    const section=
+        state.sections.find(
+            item=>Number(item.id)===
+            Number(id)
+        );
+
+    if(section){
+        openSectionModal(section);
+    }
 }
 
 async function deleteSection(id){
-    const section=state.sections.find(item=>Number(item.id)===Number(id));
-    if(!confirm(`Hapus section "${section?.title||section?.section_key||id}"?`))return;
+    const section=
+        state.sections.find(
+            item=>Number(item.id)===
+            Number(id)
+        );
 
-    await apiFetch("section",{
-        method:"DELETE",
-        params:{id}
-    });
+    if(
+        !confirm(
+            `Hapus section "${
+                section?.title||
+                section?.section_key||
+                id
+            }"?`
+        )
+    )return;
 
-    showToast("Section berhasil dihapus.");
-    await loadSections(state.currentPage);
+    await apiFetch(
+        "section",
+        {
+            method:"DELETE",
+            params:{id}
+        }
+    );
+
+    showToast(
+        "Section berhasil dihapus."
+    );
+
+    await loadSections(
+        state.currentPage
+    );
+
+    refreshLivePreview();
 }
 
 /* NAVIGATION */
 
 async function loadNavigation(){
     const tbody=$("navigation-table");
-    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat data...</div></div></td></tr>';
 
-    const result=await apiFetch("navigation");
-    state.navigation=result.data||[];
+    tbody.innerHTML=`
+        <tr>
+            <td colspan="6">
+                <div class="empty">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <div class="mt-2">
+                        Memuat data...
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    const result=
+        await apiFetch("navigation");
+
+    state.navigation=
+        result.data||[];
 
     if(!state.navigation.length){
-        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada menu navigasi.</div></td></tr>';
+        tbody.innerHTML=`
+            <tr>
+                <td colspan="6">
+                    <div class="empty">
+                        Belum ada menu navigasi.
+                    </div>
+                </td>
+            </tr>
+        `;
+
         return;
     }
 
-    tbody.innerHTML=state.navigation.map(item=>`
+    tbody.innerHTML=
+        state.navigation.map(item=>`
         <tr>
-            <td><div class="font-semibold text-slate-800">${escapeHtml(item.label||"Tanpa label")}</div></td>
-            <td><code class="text-xs bg-slate-100 px-2 py-1 rounded">${escapeHtml(item.url||"#")}</code></td>
-            <td>${escapeHtml(item.target||"_self")}</td>
-            <td>${escapeHtml(item.sort_order??0)}</td>
-            <td>${visibleBadge(item.is_visible)}</td>
+            <td>
+                <div class="font-semibold text-slate-800">
+                    ${escapeHtml(
+                        item.label||
+                        "Tanpa label"
+                    )}
+                </div>
+            </td>
+
+            <td>
+                <code class="text-xs bg-slate-100 px-2 py-1 rounded">
+                    ${escapeHtml(
+                        item.url||
+                        "#"
+                    )}
+                </code>
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    item.target||
+                    "_self"
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    item.sort_order??0
+                )}
+            </td>
+
+            <td>
+                ${visibleBadge(
+                    item.is_visible
+                )}
+            </td>
+
             <td>
                 <div class="flex gap-1.5">
-                    <button class="btn btn-secondary !p-2" onclick="window.ZWSCMS.editNavigation(${Number(item.id)})"><i class="fa-solid fa-pen text-xs"></i></button>
-                    <button class="btn btn-danger !p-2" onclick="window.ZWSCMS.deleteNavigation(${Number(item.id)})"><i class="fa-solid fa-trash text-xs"></i></button>
+
+                    <button
+                        class="btn btn-secondary !p-2"
+                        onclick="window.ZWSCMS.editNavigation(${Number(item.id)})">
+                        <i class="fa-solid fa-pen text-xs"></i>
+                    </button>
+
+                    <button
+                        class="btn btn-danger !p-2"
+                        onclick="window.ZWSCMS.deleteNavigation(${Number(item.id)})">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
+
                 </div>
             </td>
         </tr>
@@ -1201,37 +2163,112 @@ function openNavigationModal(item=null){
     state.modalType="navigation";
     state.modalId=item?.id||null;
 
-    $("modal-title").textContent=item?"Edit Menu":"Tambah Menu";
-    $("modal-subtitle").textContent=item?"Perbarui menu navigasi":"Tambahkan menu navigasi";
+    $("modal-title").textContent=
+        item?
+        "Edit Menu":
+        "Tambah Menu";
+
+    $("modal-subtitle").textContent=
+        item?
+        "Perbarui menu navigasi":
+        "Tambahkan menu navigasi";
 
     $("modal-body").innerHTML=`
         <div class="grid md:grid-cols-2 gap-4">
+
             <div class="md:col-span-2">
-                <label class="label">Label *</label>
-                <input id="m-nav-label" class="input" required value="${escapeHtml(item?.label||"")}">
+                <label class="label">
+                    Label *
+                </label>
+
+                <input
+                    id="m-nav-label"
+                    class="input"
+                    required
+                    value="${escapeHtml(
+                        item?.label||
+                        ""
+                    )}">
             </div>
+
             <div class="md:col-span-2">
-                <label class="label">URL *</label>
-                <input id="m-nav-url" class="input" required placeholder="/tentang" value="${escapeHtml(item?.url||"")}">
+                <label class="label">
+                    URL *
+                </label>
+
+                <input
+                    id="m-nav-url"
+                    class="input"
+                    required
+                    placeholder="/tentang"
+                    value="${escapeHtml(
+                        item?.url||
+                        ""
+                    )}">
             </div>
+
             <div>
-                <label class="label">Target</label>
-                <select id="m-nav-target" class="input">
-                    <option value="_self" ${item?.target!=="_blank"?"selected":""}>Tab yang sama</option>
-                    <option value="_blank" ${item?.target==="_blank"?"selected":""}>Tab baru</option>
+                <label class="label">
+                    Target
+                </label>
+
+                <select
+                    id="m-nav-target"
+                    class="input">
+
+                    <option
+                        value="_self"
+                        ${item?.target!=="_blank"?"selected":""}>
+                        Tab yang sama
+                    </option>
+
+                    <option
+                        value="_blank"
+                        ${item?.target==="_blank"?"selected":""}>
+                        Tab baru
+                    </option>
+
                 </select>
             </div>
+
             <div>
-                <label class="label">Urutan</label>
-                <input id="m-nav-order" type="number" class="input" value="${escapeHtml(item?.sort_order??0)}">
+                <label class="label">
+                    Urutan
+                </label>
+
+                <input
+                    id="m-nav-order"
+                    type="number"
+                    class="input"
+                    value="${escapeHtml(
+                        item?.sort_order??0
+                    )}">
             </div>
+
             <div>
-                <label class="label">Tampilan</label>
-                <select id="m-nav-visible" class="input">
-                    <option value="1" ${Number(item?.is_visible??1)===1?"selected":""}>Tampilkan</option>
-                    <option value="0" ${Number(item?.is_visible)===0?"selected":""}>Sembunyikan</option>
+                <label class="label">
+                    Tampilan
+                </label>
+
+                <select
+                    id="m-nav-visible"
+                    class="input">
+
+                    <option
+                        value="1"
+                        ${Number(item?.is_visible??1)===1?"selected":""}>
+                        Tampilkan
+                    </option>
+
+                    <option
+                        value="0"
+                        ${Number(item?.is_visible)===0?"selected":""}>
+                        Sembunyikan
+                    </option>
+
                 </select>
             </div>
+
         </div>
     `;
 
@@ -1241,112 +2278,280 @@ function openNavigationModal(item=null){
 async function saveNavigation(){
     const body={
         label:$("m-nav-label").value.trim(),
-        url:$("m-nav-url").value.trim()||"#",
+        url:$("m-nav-url").value.trim()||
+            "#",
         target:$("m-nav-target").value,
-        sort_order:Number($("m-nav-order").value||0),
-        is_visible:Number($("m-nav-visible").value)
+        sort_order:Number(
+            $("m-nav-order").value||0
+        ),
+        is_visible:Number(
+            $("m-nav-visible").value
+        )
     };
 
     if(!body.label){
-        showToast("Label menu wajib diisi.","error");
+        showToast(
+            "Label menu wajib diisi.",
+            "error"
+        );
+
         return;
     }
 
-    const method=state.modalId?"PUT":"POST";
-    if(state.modalId)body.id=state.modalId;
+    const method=
+        state.modalId?
+        "PUT":
+        "POST";
 
-    await apiFetch("navigation",{
-        method,
-        body:JSON.stringify(body)
-    });
+    if(state.modalId){
+        body.id=state.modalId;
+    }
+
+    await apiFetch(
+        "navigation",
+        {
+            method,
+            body:JSON.stringify(body)
+        }
+    );
+
+    const wasEdit=Boolean(state.modalId);
 
     closeModal();
-    showToast(state.modalId?"Menu berhasil diperbarui.":"Menu berhasil ditambahkan.");
+
+    showToast(
+        wasEdit?
+        "Menu berhasil diperbarui.":
+        "Menu berhasil ditambahkan."
+    );
+
     await loadNavigation();
+
+    refreshLivePreview();
 }
 
 async function editNavigation(id){
-    const item=state.navigation.find(x=>Number(x.id)===Number(id));
-    if(item)openNavigationModal(item);
+    const item=
+        state.navigation.find(
+            x=>Number(x.id)===
+            Number(id)
+        );
+
+    if(item){
+        openNavigationModal(item);
+    }
 }
 
 async function deleteNavigation(id){
-    const item=state.navigation.find(x=>Number(x.id)===Number(id));
-    if(!confirm(`Hapus menu "${item?.label||id}"?`))return;
+    const item=
+        state.navigation.find(
+            x=>Number(x.id)===
+            Number(id)
+        );
 
-    await apiFetch("navigation",{
-        method:"DELETE",
-        params:{id}
-    });
+    if(
+        !confirm(
+            `Hapus menu "${
+                item?.label||
+                id
+            }"?`
+        )
+    )return;
 
-    showToast("Menu berhasil dihapus.");
+    await apiFetch(
+        "navigation",
+        {
+            method:"DELETE",
+            params:{id}
+        }
+    );
+
+    showToast(
+        "Menu berhasil dihapus."
+    );
+
     await loadNavigation();
+
+    refreshLivePreview();
 }
 
 /* MEDIA */
 
 async function loadMedia(){
     const tbody=$("media-table");
-    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat data...</div></div></td></tr>';
 
-    const result=await apiFetch("media");
+    tbody.innerHTML=`
+        <tr>
+            <td colspan="6">
+                <div class="empty">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <div class="mt-2">
+                        Memuat data...
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    const result=
+        await apiFetch("media");
+
     state.media=result.data||[];
 
     if(!state.media.length){
-        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada data media.</div></td></tr>';
+        tbody.innerHTML=`
+            <tr>
+                <td colspan="6">
+                    <div class="empty">
+                        Belum ada data media.
+                    </div>
+                </td>
+            </tr>
+        `;
+
         return;
     }
 
-    tbody.innerHTML=state.media.map(item=>`
+    tbody.innerHTML=
+        state.media.map(item=>`
         <tr>
+
             <td>
-                <div class="font-semibold text-slate-800">${escapeHtml(item.name||item.filename||item.file_name||"Media")}</div>
-                <div class="text-xs text-slate-400 mt-1">ID ${escapeHtml(item.id)}</div>
+                <div class="font-semibold text-slate-800">
+                    ${escapeHtml(
+                        item.name||
+                        item.filename||
+                        item.file_name||
+                        "Media"
+                    )}
+                </div>
+
+                <div class="text-xs text-slate-400 mt-1">
+                    ID ${escapeHtml(item.id)}
+                </div>
             </td>
+
             <td>
-                <div class="max-w-[250px] truncate text-xs text-blue-600" title="${escapeHtml(item.url||item.public_url||"")}">${escapeHtml(item.url||item.public_url||"—")}</div>
+                <div
+                    class="max-w-[250px] truncate text-xs text-blue-600"
+                    title="${escapeHtml(
+                        item.url||
+                        item.public_url||
+                        ""
+                    )}">
+                    ${escapeHtml(
+                        item.url||
+                        item.public_url||
+                        "—"
+                    )}
+                </div>
             </td>
-            <td>${escapeHtml(item.folder||"—")}</td>
-            <td>${escapeHtml(item.mime_type||item.type||"—")}</td>
-            <td>${escapeHtml(item.size||item.file_size||"—")}</td>
+
             <td>
-                <button class="btn btn-danger !p-2" onclick="window.ZWSCMS.deleteMedia(${Number(item.id)})"><i class="fa-solid fa-trash text-xs"></i></button>
+                ${escapeHtml(
+                    item.folder||
+                    "—"
+                )}
             </td>
+
+            <td>
+                ${escapeHtml(
+                    item.mime_type||
+                    item.type||
+                    "—"
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    item.size||
+                    item.file_size||
+                    "—"
+                )}
+            </td>
+
+            <td>
+                <button
+                    class="btn btn-danger !p-2"
+                    onclick="window.ZWSCMS.deleteMedia(${Number(item.id)})">
+                    <i class="fa-solid fa-trash text-xs"></i>
+                </button>
+            </td>
+
         </tr>
     `).join("");
 }
 
 async function deleteMedia(id){
-    if(!confirm("Hapus data media ini dari database?"))return;
+    if(
+        !confirm(
+            "Hapus data media ini dari database?"
+        )
+    )return;
 
-    await apiFetch("media",{
-        method:"DELETE",
-        params:{id}
-    });
+    await apiFetch(
+        "media",
+        {
+            method:"DELETE",
+            params:{id}
+        }
+    );
 
-    showToast("Data media berhasil dihapus.");
+    showToast(
+        "Data media berhasil dihapus."
+    );
+
     await loadMedia();
 }
 
 /* SETTINGS */
 
 async function loadSettings(){
-    const result=await apiFetch("settings");
+    const result=
+        await apiFetch("settings");
+
     const data=result.data||{};
 
-    $("settings-site-name").value=data.site_name||"";
-    $("settings-site-title").value=data.site_title||"";
-    $("settings-tagline").value=data.tagline||"";
-    $("settings-logo").value=data.logo_url||"";
-    $("settings-favicon").value=data.favicon_url||"";
-    $("settings-email").value=data.contact_email||"";
-    $("settings-phone").value=data.contact_phone||"";
-    $("settings-whatsapp").value=data.whatsapp||"";
-    $("settings-primary").value=data.primary_color||"#1463d6";
-    $("settings-secondary").value=data.secondary_color||"#ffffff";
-    $("settings-description").value=data.description||"";
-    $("settings-address").value=data.address||"";
-    $("settings-copyright").value=data.copyright_text||"";
+    $("settings-site-name").value=
+        data.site_name||"";
+
+    $("settings-site-title").value=
+        data.site_title||"";
+
+    $("settings-tagline").value=
+        data.tagline||"";
+
+    $("settings-logo").value=
+        data.logo_url||"";
+
+    $("settings-favicon").value=
+        data.favicon_url||"";
+
+    $("settings-email").value=
+        data.contact_email||"";
+
+    $("settings-phone").value=
+        data.contact_phone||"";
+
+    $("settings-whatsapp").value=
+        data.whatsapp||"";
+
+    $("settings-primary").value=
+        data.primary_color||
+        "#1463d6";
+
+    $("settings-secondary").value=
+        data.secondary_color||
+        "#ffffff";
+
+    $("settings-description").value=
+        data.description||"";
+
+    $("settings-address").value=
+        data.address||"";
+
+    $("settings-copyright").value=
+        data.copyright_text||"";
 }
 
 async function saveSettings(){
@@ -1359,35 +2564,62 @@ async function saveSettings(){
         contact_email:$("settings-email").value.trim(),
         contact_phone:$("settings-phone").value.trim(),
         whatsapp:$("settings-whatsapp").value.trim(),
-        primary_color:$("settings-primary").value.trim()||"#1463d6",
-        secondary_color:$("settings-secondary").value.trim()||"#ffffff",
+        primary_color:$("settings-primary").value.trim()||
+            "#1463d6",
+        secondary_color:$("settings-secondary").value.trim()||
+            "#ffffff",
         description:$("settings-description").value,
         address:$("settings-address").value,
         copyright_text:$("settings-copyright").value.trim()
     };
 
-    await apiFetch("settings",{
-        method:"POST",
-        body:JSON.stringify(body)
-    });
+    await apiFetch(
+        "settings",
+        {
+            method:"POST",
+            body:JSON.stringify(body)
+        }
+    );
 
-    showToast("Pengaturan website berhasil disimpan.");
+    showToast(
+        "Pengaturan website berhasil disimpan."
+    );
+
+    refreshLivePreview();
 }
 
 /* SEO */
 
 async function loadSeo(){
-    const result=await apiFetch("seo");
+    const result=
+        await apiFetch("seo");
+
     const data=result.data||{};
 
-    $("seo-title").value=data.meta_title||"";
-    $("seo-description").value=data.meta_description||"";
-    $("seo-keywords").value=data.keywords||"";
-    $("seo-canonical").value=data.canonical_url||"";
-    $("seo-robots").value=data.robots||"index,follow";
-    $("seo-og-title").value=data.og_title||"";
-    $("seo-og-description").value=data.og_description||"";
-    $("seo-og-image").value=data.og_image||"";
+    $("seo-title").value=
+        data.meta_title||"";
+
+    $("seo-description").value=
+        data.meta_description||"";
+
+    $("seo-keywords").value=
+        data.keywords||"";
+
+    $("seo-canonical").value=
+        data.canonical_url||"";
+
+    $("seo-robots").value=
+        data.robots||
+        "index,follow";
+
+    $("seo-og-title").value=
+        data.og_title||"";
+
+    $("seo-og-description").value=
+        data.og_description||"";
+
+    $("seo-og-image").value=
+        data.og_image||"";
 }
 
 async function saveSeo(){
@@ -1396,33 +2628,56 @@ async function saveSeo(){
         meta_description:$("seo-description").value,
         keywords:$("seo-keywords").value.trim(),
         canonical_url:$("seo-canonical").value.trim(),
-        robots:$("seo-robots").value.trim()||"index,follow",
+        robots:$("seo-robots").value.trim()||
+            "index,follow",
         og_title:$("seo-og-title").value.trim(),
         og_description:$("seo-og-description").value,
         og_image:$("seo-og-image").value.trim()
     };
 
-    await apiFetch("seo",{
-        method:"POST",
-        body:JSON.stringify(body)
-    });
+    await apiFetch(
+        "seo",
+        {
+            method:"POST",
+            body:JSON.stringify(body)
+        }
+    );
 
-    showToast("SEO berhasil disimpan.");
+    showToast(
+        "SEO berhasil disimpan."
+    );
+
+    refreshLivePreview();
 }
 
 /* CONTACT */
 
 async function loadContact(){
-    const result=await apiFetch("contact");
+    const result=
+        await apiFetch("contact");
+
     const data=result.data||{};
 
-    $("contact-email").value=data.email||"";
-    $("contact-whatsapp").value=data.whatsapp||"";
-    $("contact-phone").value=data.phone||"";
-    $("contact-instagram").value=data.instagram||"";
-    $("contact-facebook").value=data.facebook||"";
-    $("contact-linkedin").value=data.linkedin||"";
-    $("contact-website").value=data.website||"";
+    $("contact-email").value=
+        data.email||"";
+
+    $("contact-whatsapp").value=
+        data.whatsapp||"";
+
+    $("contact-phone").value=
+        data.phone||"";
+
+    $("contact-instagram").value=
+        data.instagram||"";
+
+    $("contact-facebook").value=
+        data.facebook||"";
+
+    $("contact-linkedin").value=
+        data.linkedin||"";
+
+    $("contact-website").value=
+        data.website||"";
 }
 
 async function saveContact(){
@@ -1436,36 +2691,109 @@ async function saveContact(){
         website:$("contact-website").value.trim()
     };
 
-    await apiFetch("contact",{
-        method:"POST",
-        body:JSON.stringify(body)
-    });
+    await apiFetch(
+        "contact",
+        {
+            method:"POST",
+            body:JSON.stringify(body)
+        }
+    );
 
-    showToast("Kontak berhasil disimpan.");
+    showToast(
+        "Kontak berhasil disimpan."
+    );
+
+    refreshLivePreview();
 }
 
 /* USERS */
 
 async function loadUsers(){
     const tbody=$("users-table");
-    tbody.innerHTML='<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-spinner fa-spin"></i><div class="mt-2">Memuat data...</div></div></td></tr>';
 
-    const result=await apiFetch("users");
+    tbody.innerHTML=`
+        <tr>
+            <td colspan="6">
+                <div class="empty">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <div class="mt-2">
+                        Memuat data...
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    const result=
+        await apiFetch("users");
+
     state.users=result.data||[];
 
     if(!state.users.length){
-        tbody.innerHTML='<tr><td colspan="6"><div class="empty">Belum ada pengguna pada tabel admin_users.</div></td></tr>';
+        tbody.innerHTML=`
+            <tr>
+                <td colspan="6">
+                    <div class="empty">
+                        Belum ada pengguna pada tabel admin_users.
+                    </div>
+                </td>
+            </tr>
+        `;
+
         return;
     }
 
-    tbody.innerHTML=state.users.map(user=>`
+    tbody.innerHTML=
+        state.users.map(user=>`
         <tr>
-            <td><div class="font-semibold text-slate-800">${escapeHtml(user.username||"—")}</div></td>
-            <td>${escapeHtml(user.display_name||"—")}</td>
-            <td><span class="badge badge-blue">${escapeHtml(user.role||"admin")}</span></td>
-            <td>${Number(user.is_active)===1?'<span class="badge badge-green">Aktif</span>':'<span class="badge badge-gray">Nonaktif</span>'}</td>
-            <td class="text-xs text-slate-500">${formatDate(user.created_at)}</td>
-            <td class="text-xs text-slate-500">${formatDate(user.updated_at)}</td>
+
+            <td>
+                <div class="font-semibold text-slate-800">
+                    ${escapeHtml(
+                        user.username||
+                        "—"
+                    )}
+                </div>
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    user.display_name||
+                    "—"
+                )}
+            </td>
+
+            <td>
+                <span class="badge badge-blue">
+                    ${escapeHtml(
+                        user.role||
+                        "admin"
+                    )}
+                </span>
+            </td>
+
+            <td>
+                ${
+                    Number(user.is_active)===1
+                    ?
+                    '<span class="badge badge-green">Aktif</span>'
+                    :
+                    '<span class="badge badge-gray">Nonaktif</span>'
+                }
+            </td>
+
+            <td class="text-xs text-slate-500">
+                ${formatDate(
+                    user.created_at
+                )}
+            </td>
+
+            <td class="text-xs text-slate-500">
+                ${formatDate(
+                    user.updated_at
+                )}
+            </td>
+
         </tr>
     `).join("");
 }
@@ -1474,7 +2802,9 @@ async function loadUsers(){
 
 function closeModal(){
     $("modal").classList.remove("show");
+
     $("modal-body").innerHTML="";
+
     state.modalType=null;
     state.modalId=null;
 }
@@ -1483,109 +2813,270 @@ async function handleModalSubmit(event){
     event.preventDefault();
 
     try{
-        if(state.modalType==="page")await savePage();
-        if(state.modalType==="section")await saveSection();
-        if(state.modalType==="navigation")await saveNavigation();
+        if(
+            state.modalType===
+            "page"
+        ){
+            await savePage();
+        }
+
+        if(
+            state.modalType===
+            "section"
+        ){
+            await saveSection();
+        }
+
+        if(
+            state.modalType===
+            "navigation"
+        ){
+            await saveNavigation();
+        }
+
     }catch(error){
         console.error(error);
-        showToast(error.message||"Gagal menyimpan data.","error");
+
+        showToast(
+            error.message||
+            "Gagal menyimpan data.",
+            "error"
+        );
     }
 }
 
 /* MOBILE */
 
 function openMobileMenu(){
-    $("sidebar").classList.add("open");
-    $("mobile-overlay").classList.add("show");
+    $("sidebar").classList.add(
+        "open"
+    );
+
+    $("mobile-overlay").classList.add(
+        "show"
+    );
 }
 
 function closeMobileMenu(){
-    $("sidebar").classList.remove("open");
-    $("mobile-overlay").classList.remove("show");
+    $("sidebar").classList.remove(
+        "open"
+    );
+
+    $("mobile-overlay").classList.remove(
+        "show"
+    );
 }
 
 /* EVENTS */
 
-document.querySelectorAll("[data-page]").forEach(button=>{
-    button.addEventListener("click",()=>{
-        const page=button.dataset.page;
-        if(page)setView(page);
-    });
+document.querySelectorAll(
+    "[data-page]"
+).forEach(button=>{
+    button.addEventListener(
+        "click",
+        ()=>{
+            const page=
+                button.dataset.page;
+
+            if(page){
+                setView(page);
+            }
+        }
+    );
 });
 
-$("mobile-menu").addEventListener("click",openMobileMenu);
-$("mobile-overlay").addEventListener("click",closeMobileMenu);
-$("logout-btn").addEventListener("click",logout);
+$("mobile-menu").addEventListener(
+    "click",
+    openMobileMenu
+);
 
-$("refresh-btn").addEventListener("click",async()=>{
-    const icon=$("refresh-btn").querySelector("i");
-    icon.classList.add("fa-spin");
+$("mobile-overlay").addEventListener(
+    "click",
+    closeMobileMenu
+);
 
-    try{
-        await loadView(state.currentView);
-        showToast("Data berhasil diperbarui.");
-    }catch(error){
-        showToast(error.message||"Refresh gagal.","error");
-    }finally{
-        setTimeout(()=>icon.classList.remove("fa-spin"),400);
+$("logout-btn").addEventListener(
+    "click",
+    logout
+);
+
+$("refresh-btn").addEventListener(
+    "click",
+    async()=>{
+        const icon=
+            $("refresh-btn").querySelector("i");
+
+        icon.classList.add(
+            "fa-spin"
+        );
+
+        try{
+            await loadView(
+                state.currentView
+            );
+
+            showToast(
+                "Data berhasil diperbarui."
+            );
+
+        }catch(error){
+            showToast(
+                error.message||
+                "Refresh gagal.",
+                "error"
+            );
+
+        }finally{
+            setTimeout(
+                ()=>{
+                    icon.classList.remove(
+                        "fa-spin"
+                    );
+                },
+                400
+            );
+        }
     }
-});
+);
 
-$("add-page-btn").addEventListener("click",()=>openPageModal());
+$("refresh-preview-btn").addEventListener(
+    "click",
+    ()=>{
+        refreshLivePreview();
 
-$("add-section-btn").addEventListener("click",()=>{
-    if(!state.currentPage){
-        showToast("Pilih halaman terlebih dahulu.","error");
-        return;
+        showToast(
+            "Live preview diperbarui."
+        );
     }
-    openSectionModal();
-});
+);
 
-$("add-navigation-btn").addEventListener("click",()=>openNavigationModal());
-
-$("section-page-select").addEventListener("change",async event=>{
-    state.currentPage=event.target.value;
-    try{
-        await loadSections(state.currentPage);
-    }catch(error){
-        showToast(error.message||"Gagal memuat section.","error");
+$("add-page-btn").addEventListener(
+    "click",
+    ()=>{
+        openPageModal();
     }
-});
+);
 
-$("settings-form").addEventListener("submit",async event=>{
-    event.preventDefault();
-    try{
-        await saveSettings();
-    }catch(error){
-        showToast(error.message||"Gagal menyimpan pengaturan.","error");
+$("add-section-btn").addEventListener(
+    "click",
+    ()=>{
+        if(!state.currentPage){
+            showToast(
+                "Pilih halaman terlebih dahulu.",
+                "error"
+            );
+
+            return;
+        }
+
+        openSectionModal();
     }
-});
+);
 
-$("seo-form").addEventListener("submit",async event=>{
-    event.preventDefault();
-    try{
-        await saveSeo();
-    }catch(error){
-        showToast(error.message||"Gagal menyimpan SEO.","error");
+$("add-navigation-btn").addEventListener(
+    "click",
+    ()=>{
+        openNavigationModal();
     }
-});
+);
 
-$("contact-form").addEventListener("submit",async event=>{
-    event.preventDefault();
-    try{
-        await saveContact();
-    }catch(error){
-        showToast(error.message||"Gagal menyimpan kontak.","error");
+$("section-page-select").addEventListener(
+    "change",
+    async event=>{
+        state.currentPage=
+            event.target.value;
+
+        try{
+            await loadSections(
+                state.currentPage
+            );
+        }catch(error){
+            showToast(
+                error.message||
+                "Gagal memuat section.",
+                "error"
+            );
+        }
     }
-});
+);
 
-$("modal-form").addEventListener("submit",handleModalSubmit);
-$("modal-close").addEventListener("click",closeModal);
-$("modal-cancel").addEventListener("click",closeModal);
+$("settings-form").addEventListener(
+    "submit",
+    async event=>{
+        event.preventDefault();
 
-$("modal").addEventListener("click",event=>{
-    if(event.target===$("modal"))closeModal();
-});
+        try{
+            await saveSettings();
+        }catch(error){
+            showToast(
+                error.message||
+                "Gagal menyimpan pengaturan.",
+                "error"
+            );
+        }
+    }
+);
+
+$("seo-form").addEventListener(
+    "submit",
+    async event=>{
+        event.preventDefault();
+
+        try{
+            await saveSeo();
+        }catch(error){
+            showToast(
+                error.message||
+                "Gagal menyimpan SEO.",
+                "error"
+            );
+        }
+    }
+);
+
+$("contact-form").addEventListener(
+    "submit",
+    async event=>{
+        event.preventDefault();
+
+        try{
+            await saveContact();
+        }catch(error){
+            showToast(
+                error.message||
+                "Gagal menyimpan kontak.",
+                "error"
+            );
+        }
+    }
+);
+
+$("modal-form").addEventListener(
+    "submit",
+    handleModalSubmit
+);
+
+$("modal-close").addEventListener(
+    "click",
+    closeModal
+);
+
+$("modal-cancel").addEventListener(
+    "click",
+    closeModal
+);
+
+$("modal").addEventListener(
+    "click",
+    event=>{
+        if(
+            event.target===
+            $("modal")
+        ){
+            closeModal();
+        }
+    }
+);
 
 window.ZWSCMS={
     editPage,
@@ -1600,13 +3091,18 @@ window.ZWSCMS={
 /* START */
 
 (async()=>{
-    const authenticated=await checkSession();
+    const authenticated=
+        await checkSession();
+
     if(!authenticated)return;
 
     try{
         await loadDashboard();
     }catch(error){
-        console.error("Initial dashboard error:",error);
+        console.error(
+            "Initial dashboard error:",
+            error
+        );
     }
 })();
 
